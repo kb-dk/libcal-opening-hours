@@ -6,3 +6,4 @@ TODO
 * make overlay for map and view all:week
 * make man view
 * ensure that everything is loaded as dynamic as possible, and that the loader script is as tidy and human readable as possible
+* i18n so config takes a lang:en/da option
