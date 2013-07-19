@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Xdomain 3rd party javascript test</title>
+    <meta charset="utf-8">
+    <style>
+        #container{
+            width:235px;
+            margin:0 auto;
+            border:1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <p>Here is room for some 3rd party js:</p>
+        <div id="openingHoursTargetDiv"></div>
+        <script src="http://localhost:8002/snippet.js"></script>
+        <script src="http://api.libcal.com/api_hours_grid.php?iid=1069&format=json&weeks=1&callback=loadOpeningHours001" async></script>
+        <p>Did it show up?</p>
+    </div>
+</body>
+</html>
