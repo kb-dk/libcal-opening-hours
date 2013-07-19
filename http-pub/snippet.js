@@ -231,8 +231,7 @@ var OpeningHours = (function (document) {
                     contentStr += '</tbody></table>';
                 } else {
                     // lib week
-                    //contentStr += '<table>' + getThead(this.config.colorScheme, library, 'Åbningstid') + '<tbody>';
-                    contentStr += '<table>' + getThead(this.config.colorScheme, library) + '<tbody>';
+                    contentStr += '<table>' + getThead(this.config.colorScheme, library, 'Åbningstid') + '<tbody>';
                     var tmpWeekdays = weekdays.slice(0);
                     tmpWeekdays.push(tmpWeekdays.shift()); // Danish weeks starts on Monday
                     tmpWeekdays.forEach(function (day) {
