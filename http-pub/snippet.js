@@ -54,6 +54,24 @@ var OpeningHours = (function (document) {
         return str;
     }
 
+    /**
+     * Returns a html string where all arguments are wrapped in. Format: "<thead><tr><th>arg1</th><th>arg2</th>...</tr></thead>" tags.
+     * Also adds class first and last to the first and last header
+     * NOTE: Must have a colorscheme as first parameter like 'standard01'
+     */
+    function getThead(colorScheme) {
+        var str = '<thead><tr class="' + (colorScheme || 'standard') + '">';
+        if (arguments.length < 3) {
+            return str + '<th class="first last">' + (arguments[1] || '') + '</th></tr></thead>';
+        } else {
+            str += '<th class="first">' + arguments[1] + '</th>';
+            for (var i = 2; i < arguments.length - 1; i += 1) {
+                str += '<th>' + arguments[i] + '</th>';
+            }
+            return str + '<th class="last">' + arguments[arguments.length-1] + '</th></tr></thead>';
+        }
+    }
+
     function getTr() {
         var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
         nextRowIsOdd = !nextRowIsOdd;
@@ -174,7 +192,7 @@ var OpeningHours = (function (document) {
             if (library === 'all') {
                 if (timespan === 'week') {
                     // all week
-                    contentStr += '<table><thead><tr><th>Bibliotek</th><th>m</th><th>t</th><th>o</th><th>t</th><th>f</th><th>l</th><th>s</th></tr></thead><tbody>'; // TODO: weekday abbrevations should be checked
+                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek','m','t','o','t','f','l','s') + '<tbody>'; // TODO: check weekday abbrevations
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
                             location.name,
@@ -190,7 +208,7 @@ var OpeningHours = (function (document) {
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
                 } else {
                     // all day
-                    contentStr += '<table><thead><tr><th>Bibliotek</th><th>Dagens åbningstid</th></tr></thead><tbody>';
+                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek', 'Dagens åbningstid') + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
@@ -207,13 +225,14 @@ var OpeningHours = (function (document) {
                 }
                 if (timespan === 'day') {
                     // lib day
-                    contentStr += '<table><thead><tr><th>Bibliotek</th><th>Dagens åbningstid</th></tr></thead><tbody>';
+                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek', 'Dagens åbningstid') + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, timesToStr(libraryHours.weeks[0][today].times)); // FIXME: Check how many places you use nameToKey (and if it is needed at all)
                     contentStr += '</tbody></table>';
                 } else {
                     // lib week
-                    contentStr += '<table><thead><tr><th>' + library + '</th><th>Åbningstid</th></tr></thead><tbody>';
+                    //contentStr += '<table>' + getThead(this.config.colorScheme, library, 'Åbningstid') + '<tbody>';
+                    contentStr += '<table>' + getThead(this.config.colorScheme, library) + '<tbody>';
                     var tmpWeekdays = weekdays.slice(0);
                     tmpWeekdays.push(tmpWeekdays.shift()); // Danish weeks starts on Monday
                     tmpWeekdays.forEach(function (day) {
