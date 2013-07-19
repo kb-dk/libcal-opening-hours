@@ -1,5 +1,5 @@
 {
-    "name" : "2 http-servers",
+    "name" : "2http-servers",
     "version" : "0.0.2",
     "description" : "2 http-servers pointing to the same webroot. Works as local cross domain testing environment",
     "author" : "Hasse Feldthaus <hafe@kb.dk>",
