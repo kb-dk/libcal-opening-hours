@@ -80,13 +80,20 @@ var OpeningHours = (function (document) {
     OpeningHours.prototype = {
         constructor : OpeningHours,
         
-        init : function () {
+        init : function (config) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
             }
+            this.config = config || {
+                library: 'all',
+                timespan: 'day',
+                colorScheme: 'standard'
+            };
             for (var i=0; i < this.openingHours.locations.length; i += 1) {
                 libraryIndex[nameToKey(this.openingHours.locations[i].name)] = i;
             }
+            // initialize the view requested in the snippet
+            this.setView(this.config.library, this.config.timespan);
         },
 
         /**
@@ -237,6 +244,6 @@ var OpeningHours = (function (document) {
 
 function loadOpeningHours001(data) { // FIXME: This should be done more dynamic - right now it loads data for one week for all libraries once. Preferable it should be managing what to load (no need to fetch all libs all week every time?), and load more on the fly when necessary. If the data is small and the structure of the different feeds is diverse, it might not be worth the effort though?
     window.openingHours = new OpeningHours(data);
-    window.openingHours.init();
+    window.openingHours.init(OpeningHours.config);
 }
 
