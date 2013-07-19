@@ -16,6 +16,14 @@
         <p>Here is room for some 3rd party js:</p>
         <div id="openingHoursTargetDiv"></div>
         <script src="http://localhost:8002/snippet.js"></script>
+        <script type="text/javascript">
+            OpeningHours.config = {
+                // Please notice that the view library: 'all', timespan: 'week' is to wide to put in one column!
+                library: 'Det Humanistiske Fakultetsbibliotek', // 'all' or the library name as it is defined in LibCal (eg. 'HUM', 'KUB Nord' etc.)
+                timespan: 'week', // 'week' or 'day'
+                colorScheme: 'standard03' // 'standard01', 'standard02', 'standard03'
+            }
+        </script>
         <script src="http://api.libcal.com/api_hours_grid.php?iid=1069&format=json&weeks=1&callback=loadOpeningHours001" async></script>
         <p>Did it show up?</p>
     </div>
