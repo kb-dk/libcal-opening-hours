@@ -3,12 +3,21 @@
     font-size:11px; font-family: verdana, arial, helvetica, sans-serif; /* FIXME: remember to remove! */
 }
 #openingHoursTargetDiv table th{
-    background-color: rgb(175, 3, 3);
     color: #fff;
     text-align: left;
     width: 50%;
     padding: 5px;
     font-weight: normal;
+}
+#openingHoursTargetDiv table th.first{
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-left-radius: 5px;
+}
+#openingHoursTargetDiv table th.last{
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-right-radius: 5px;
 }
 #openingHoursTargetDiv table td{
     padding: 2px 5px;
@@ -22,3 +31,17 @@
 #openingHoursTargetDiv table tr.even td{
     background-color: #eaeaea;
 }
+#openingHoursTargetDiv table tr.standard th{
+    background-color: rgb(175, 3, 3); /* the red color from the mockup */
+}
+/* NOTE: Hardcoded color schemes copy pasted from www.kb.dk - this will need maintanance if colorschemes on www.kb.dk changes! */
+#openingHoursTargetDiv table tr.standard01 th{
+    background-color: #FF7617;
+}
+#openingHoursTargetDiv table tr.standard02 th{
+    background-color: #78BFD2;
+}
+#openingHoursTargetDiv table tr.standard03 th{
+    background-color: #B7B806;
+}
+
