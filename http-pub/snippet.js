@@ -37,48 +37,9 @@ var OpeningHours = (function (document) {
         return weekdays[dayIndex || new Date().getDay()];
     }
 
-    function ampmTo24(str) {
-        if (str.indexOf('am') >= 0) {
-            return parseInt(str, 10).toString();
-        }
-        if (str.indexOf('pm') >= 0) {
-            return (parseInt(str, 10) + 12).toString();
-        }
-        return str;
-    }
-
-    function timesToStr(times) {
-        if (times.status !== 'open') {
-            return 'Lukket';
-        }
-        var str = '';
-        for (var i = 0; i < times.hours.length; i += 1) {
-            str += ampmTo24(times.hours[i].from) + ' - ' + ampmTo24(times.hours[i].to);
-            if (i !== times.hours.length - 1) {
-                str += ', ';
-            }
-        }
-        return str;
-    }
-
     /**
-     * Returns a html string where all arguments are wrapped in. Format: "<thead><tr><th>arg1</th><th>arg2</th>...</tr></thead>" tags.
-     * Also adds class first and last to the first and last header
-     * NOTE: Must have a colorscheme as first parameter like 'standard01'
+     * Creates a table row - all but the very first row is set to class="timeField" (=centered no-wrap)
      */
-    function getThead(colorScheme) {
-        var str = '<thead><tr class="' + (colorScheme || 'standard') + '">';
-        if (arguments.length < 3) {
-            return str + '<th class="first last">' + (arguments[1] || '') + '</th></tr></thead>';
-        } else {
-            str += '<th class="first">' + arguments[1] + '</th>';
-            for (var i = 2; i < arguments.length - 1; i += 1) {
-                str += '<th>' + arguments[i] + '</th>';
-            }
-            return str + '<th class="last">' + arguments[arguments.length-1] + '</th></tr></thead>';
-        }
-    }
-
     function getTr() {
         var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
         nextRowIsOdd = !nextRowIsOdd;
@@ -199,28 +160,37 @@ var OpeningHours = (function (document) {
             if (library === 'all') {
                 if (timespan === 'week') {
                     // all week
-                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek','m','t','o','t','f','l','s') + '<tbody>'; // TODO: check weekday abbrevations
+                    contentStr += '<table>' + that.getThead(
+                        this.config.i18n.library,
+                        this.config.i18n.weekdaysAbbr[0], // this looks like something that ought to be an array instead?
+                        this.config.i18n.weekdaysAbbr[1],
+                        this.config.i18n.weekdaysAbbr[2],
+                        this.config.i18n.weekdaysAbbr[3],
+                        this.config.i18n.weekdaysAbbr[4],
+                        this.config.i18n.weekdaysAbbr[5],
+                        this.config.i18n.weekdaysAbbr[6]
+                        ) + '<tbody>';
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
                             location.name,
-                            timesToStr(location.weeks[0].Monday.times),
-                            timesToStr(location.weeks[0].Tuesday.times),
-                            timesToStr(location.weeks[0].Wednesday.times),
-                            timesToStr(location.weeks[0].Thursday.times),
-                            timesToStr(location.weeks[0].Friday.times),
-                            timesToStr(location.weeks[0].Saturday.times),
-                            timesToStr(location.weeks[0].Sunday.times)
+                            that.timesToStr(location.weeks[0].Monday.times),
+                            that.timesToStr(location.weeks[0].Tuesday.times),
+                            that.timesToStr(location.weeks[0].Wednesday.times),
+                            that.timesToStr(location.weeks[0].Thursday.times),
+                            that.timesToStr(location.weeks[0].Friday.times),
+                            that.timesToStr(location.weeks[0].Saturday.times),
+                            that.timesToStr(location.weeks[0].Sunday.times)
                         );
                     });
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
                 } else {
                     // all day
-                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek', 'Dagens åbningstid') + '<tbody>';
+                    contentStr += '<table>' + that.getThead(this.config.i18n.library, this.config.i18n.openToday) + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
                             location.name,
-                            timesToStr(location.weeks[0][today].times)
+                            that.timesToStr(location.weeks[0][today].times)
                         );
                     });
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
@@ -232,17 +202,15 @@ var OpeningHours = (function (document) {
                 }
                 if (timespan === 'day') {
                     // lib day
-                    contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek', 'Dagens åbningstid') + '<tbody>';
+                    contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openToday) + '<tbody>';
                     today = getDayName();
-                    contentStr += getTr(library, timesToStr(libraryHours.weeks[0][today].times));
+                    contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody></table>';
                 } else {
                     // lib week
-                    contentStr += '<table>' + getThead(this.config.colorScheme, library, 'Åbningstid') + '<tbody>';
-                    var tmpWeekdays = weekdays.slice(0);
-                    tmpWeekdays.push(tmpWeekdays.shift()); // Danish weeks starts on Monday
-                    tmpWeekdays.forEach(function (day) {
-                        contentStr += getTr(weekdayToUgedagHash[day], timesToStr(libraryHours.weeks[0][day].times));
+                    contentStr += '<table>' + that.getThead(library, this.config.i18n.open) + '<tbody>';
+                    this.config.i18n.weekdays.forEach(function (weekday, index) {
+                        contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
                     });
                     contentStr += '</tbody></table>';
                 }
@@ -250,6 +218,7 @@ var OpeningHours = (function (document) {
             return contentStr;
         },
 
+        // --- helper functions
         getLibraryHours : function (library) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
@@ -260,7 +229,52 @@ var OpeningHours = (function (document) {
                     return that.openingHours.locations[i];
                 }
             }
-        }
+        },
+
+        ampmTo24 : function (str) { // FIXME: I don't think this need to be a member variable?
+            if (str.indexOf('am') >= 0) {
+                return parseInt(str, 10).toString();
+            }
+            if (str.indexOf('pm') >= 0) {
+                return (parseInt(str, 10) + 12).toString();
+            }
+            return str;
+        },
+
+        timesToStr : function (times) {
+            if (times.status !== 'open') {
+                return this.config.i18n.closed;
+            }
+            var str = '';
+            for (var i = 0; i < times.hours.length; i += 1) {
+                if (this.config.i18n.ampm) {
+                    str += times.hours[i].from + ' - ' + times.hours[i].to;
+                } else {
+                    str += this.ampmTo24(times.hours[i].from) + ' - ' + this.ampmTo24(times.hours[i].to);
+                }
+                if (i !== times.hours.length - 1) {
+                    str += ', ';
+                }
+            }
+            return str;
+        },
+
+        /**
+         * Returns a html string where all arguments are wrapped in. Format: "<thead><tr><th>arg1</th><th>arg2</th>...</tr></thead>" tags.
+         * Also adds class first and last to the first and last header
+         */
+        getThead : function () {
+            var str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
+            if (arguments.length < 2) {
+                return str + '<th class="first last">' + (arguments[0] || '') + '</th></tr></thead>';
+            } else {
+                str += '<th class="first">' + arguments[0] + '</th>';
+                for (var i = 1; i < arguments.length - 1; i += 1) {
+                    str += '<th>' + arguments[i] + '</th>';
+                }
+                return str + '<th class="last">' + arguments[arguments.length-1] + '</th></tr></thead>';
+            }
+        },
 
     };
 

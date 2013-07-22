@@ -21,7 +21,16 @@
                 // Please notice that the view library: 'all', timespan: 'week' is to wide to put in one column!
                 library: 'all', // 'all' or the library name as it is defined in LibCal (eg. 'HUM', 'KUB Nord' etc.)
                 timespan: 'day', // 'week' or 'day'
-                colorScheme: 'standard03' // 'standard01', 'standard02', 'standard03'
+                colorScheme: 'standard03', // 'standard01', 'standard02', 'standard03'
+                i18n: {
+                    library: 'Bibliotek',
+                    openToday: 'Dagens Åbningstid',
+                    open: 'Åbningstid',
+                    closed: 'Lukket',
+                    weekdays: ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'],
+                    weekdaysAbbr: ['man','tirs','ons','tors','fre','lør','søn'],
+                    ampm: false
+                }
             }
         </script>
         <script src="http://api.libcal.com/api_hours_grid.php?iid=1069&format=json&weeks=1&callback=loadOpeningHours001" async></script>
