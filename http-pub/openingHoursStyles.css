@@ -22,8 +22,9 @@
 #openingHoursTargetDiv table td{
     padding: 2px 5px;
 }
-#openingHoursTargetDiv table tr td.center{
+#openingHoursTargetDiv table tr td.timeField{
     text-align: center;
+    white-space: nowrap;
 }
 #openingHoursTargetDiv table tr.odd td{
     background-color: #cccccc;

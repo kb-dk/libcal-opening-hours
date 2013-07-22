@@ -83,7 +83,7 @@ var OpeningHours = (function (document) {
         var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
         nextRowIsOdd = !nextRowIsOdd;
         for (var i = 0; i < arguments.length; i += 1) {
-            str += '<td' + (i > 0 ? ' class="center"' : '') + '>' + arguments[i] + '</td>';
+            str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>';
         }
         return str + '</tr>';
     }
