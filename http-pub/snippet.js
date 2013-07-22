@@ -18,10 +18,6 @@ var OpeningHours = (function (document) {
         weekdayToUgedagHash[weekdays[index]] = ugedag;
     });
 
-    function nameToKey(name) {
-        return name.split(' ').join(''); // FIXME: Check up on http://stackoverflow.com/questions/17694531/are-funny-chars-in-hash-keys-browser-safe
-    }
-
     /**
      * Transforms a Date.getDay() number into an english dayname
      * @param dayIndex Optional If not specified today will be used
@@ -108,7 +104,7 @@ var OpeningHours = (function (document) {
                 colorScheme: 'standard'
             };
             for (var i=0; i < this.openingHours.locations.length; i += 1) {
-                libraryIndex[nameToKey(this.openingHours.locations[i].name)] = i;
+                libraryIndex[this.openingHours.locations[i].name] = i;
             }
             // initialize the view requested in the snippet
             this.setView(this.config.library, this.config.timespan);
@@ -227,7 +223,7 @@ var OpeningHours = (function (document) {
                     // lib day
                     contentStr += '<table>' + getThead(this.config.colorScheme, 'Bibliotek', 'Dagens åbningstid') + '<tbody>';
                     today = getDayName();
-                    contentStr += getTr(library, timesToStr(libraryHours.weeks[0][today].times)); // FIXME: Check how many places you use nameToKey (and if it is needed at all)
+                    contentStr += getTr(library, timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody></table>';
                 } else {
                     // lib week
