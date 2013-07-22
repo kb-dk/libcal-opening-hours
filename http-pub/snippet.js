@@ -159,7 +159,7 @@ var OpeningHours = (function (document) {
             }
             if (library === 'all') {
                 if (timespan === 'week') {
-                    // all week
+                    // --- [ all week ] ---
                     contentStr += '<table>' + that.getThead(
                         this.config.i18n.library,
                         this.config.i18n.weekdaysAbbr[0], // this looks like something that ought to be an array instead?
@@ -184,7 +184,7 @@ var OpeningHours = (function (document) {
                     });
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
                 } else {
-                    // all day
+                    // --- [ all day ] ---
                     contentStr += '<table>' + that.getThead(this.config.i18n.library, this.config.i18n.openToday) + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
@@ -201,13 +201,13 @@ var OpeningHours = (function (document) {
                     throw new ReferenceError('Requested library "' + library + '" does not exist in libCal.', 'openingHours');
                 }
                 if (timespan === 'day') {
-                    // lib day
+                    // --- [ lib day ] ---
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openToday) + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody></table>';
                 } else {
-                    // lib week
+                    // --- [ lib week ] ---
                     contentStr += '<table>' + that.getThead(library, this.config.i18n.open) + '<tbody>';
                     this.config.i18n.weekdays.forEach(function (weekday, index) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
