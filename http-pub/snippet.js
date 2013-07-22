@@ -44,7 +44,18 @@ var OpeningHours = (function (document) {
         var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
         nextRowIsOdd = !nextRowIsOdd;
         for (var i = 0; i < arguments.length; i += 1) {
-            str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>';
+            if ((typeof arguments[i] === 'string') || (arguments[i] instanceof String)) {
+                str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>';
+            } else { // TODO: If needed, this could be done more elegantly, shoveling all sorts of attributes in the html element.
+                if ((typeof arguments[i] === 'object') && (arguments[i] !== null)) {
+                    str += '<td>';
+                    str += arguments[i].href ? '<a href="' + arguments[i].href + '">' : '';
+                    str += arguments[i].text ? arguments[i].text : '';
+                    str += arguments[i].href ? '</a>' : '';
+                } else {
+                    str += '<td></td>';
+                }
+            }
         }
         return str + '</tr>';
     }
