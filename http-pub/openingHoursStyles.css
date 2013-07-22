@@ -26,6 +26,15 @@
     text-align: center;
     white-space: nowrap;
 }
+#openingHoursTargetDiv table tr td.rightalign{
+    text-align: right;
+}
+#openingHoursTargetDiv .floatleft{
+    float: left;
+}
+#openingHoursTargetDiv .floatright{
+    float: right;
+}
 #openingHoursTargetDiv table tr.odd td{
     background-color: #cccccc;
 }
