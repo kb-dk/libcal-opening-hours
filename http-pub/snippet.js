@@ -1,4 +1,15 @@
 /*global window, console*/
+
+// polyfill forEach
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function (fn, context) {
+        context = context || window;
+        for (var i = 0; i < this.length; i += 1) {
+           fn.call(context, this[i], i, this);
+        }
+    } 
+}
+
 var OpeningHours = (function (document) {
     'use strict';
     //import stylesheet // TODO: Make sure loading this sheet does not block for anything else
