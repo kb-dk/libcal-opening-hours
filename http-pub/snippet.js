@@ -79,7 +79,10 @@ var OpeningHours = (function (document) {
                 libraryIndex[this.openingHours.locations[i].name] = i;
             }
             // initialize the view requested in the snippet
-            this.setView(this.config.library, this.config.timespan);
+            this.setView({
+                library : this.config.library,
+                timespan : this.config.timespan
+            });
         },
 
         /**
@@ -98,22 +101,34 @@ var OpeningHours = (function (document) {
         /**
          * Set view to a desired view. Any other views will be turned off but cached for later use.
          * If a view isn't rendered yet, this method initiates a render of the chosen view.
-         * @param library {String} A string representation of the library that is requested. Needs to be the same as defined in libCal.Hours, or 'all' for all libraries.
-         * @param timespan {String} The timespan to view. Either 'day' or 'week'.
+         * @param config {Object} Config object containing zero, one or two of the following parameters:
+         *  - library {String} Optional A string representation of the library that is requested. Needs to be the same as defined in libCal.Hours, or 'all' for all libraries.
+         *  - timespan {String} Optional The timespan to view. Either 'day' or 'week'.
+         * if one (or more) of the parameters is not set, it will fall back on the current state of that parameter (set in this.config)
+         * if nothing is set, it will fall back on 'all', 'day'
          */
-        setView : function (library, timespan) {
+        setView : function (config) {
             if (!this.viewCache) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
             }
+            config = config || {};
+            config.library = config.library || this.config.library || 'all';
+            config.timespan = config.timespan || this.config.timespan || 'day';
+
             var that = this,
-                viewId = library + ':' + timespan;
+                viewId = config.library + ':' + config.timespan;
             if (that.viewCache[viewId]) {
                 that.turnOffAllViews();
                 that.viewCache[viewId].style.display = 'block';
             } else {
                 try{
-                    that.renderView(library, timespan);
-                    that.setView(library, timespan);
+                    that.renderView(config.library, config.timespan);
+                    that.setView({
+                        library : config.library,
+                        timespan : config.timespan
+                    });
+                    that.config.library = config.library;
+                    that.config.timespan = config.timespan;
                 } catch (e) {
                     if (e instanceof ReferenceError) {
                         console.warn(e.message);
