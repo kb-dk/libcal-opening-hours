@@ -185,7 +185,7 @@ var OpeningHours = (function (document) {
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
                 } else {
                     // --- [ all day ] ---
-                    contentStr += '<table>' + that.getThead(this.config.i18n.library, this.config.i18n.openToday) + '<tbody>';
+                    contentStr += '<table>' + that.getThead(this.config.i18n.library, this.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
@@ -202,13 +202,13 @@ var OpeningHours = (function (document) {
                 }
                 if (timespan === 'day') {
                     // --- [ lib day ] ---
-                    contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openToday) + '<tbody>';
+                    contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody></table>';
                 } else {
                     // --- [ lib week ] ---
-                    contentStr += '<table>' + that.getThead(library, this.config.i18n.open) + '<tbody>';
+                    contentStr += '<table>' + that.getThead(library, this.config.i18n.openHour) + '<tbody>';
                     this.config.i18n.weekdays.forEach(function (weekday, index) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
                     });
