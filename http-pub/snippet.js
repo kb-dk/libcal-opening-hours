@@ -129,6 +129,8 @@ var OpeningHours = (function (document) {
             var that = this,
                 viewId = config.library + ':' + config.timespan;
             if (that.viewCache[viewId]) {
+                that.config.library = config.library;
+                that.config.timespan = config.timespan;
                 that.turnOffAllViews();
                 that.viewCache[viewId].style.display = 'block';
             } else {
@@ -138,8 +140,6 @@ var OpeningHours = (function (document) {
                         library : config.library,
                         timespan : config.timespan
                     });
-                    that.config.library = config.library;
-                    that.config.timespan = config.timespan;
                 } catch (e) {
                     if (e instanceof ReferenceError) {
                         console.warn(e.message);
@@ -215,11 +215,15 @@ var OpeningHours = (function (document) {
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
-                            location.name,
+                            {
+                                href: 'javascript: openingHours.setView({library: \''+location.name+'\',timespan: \'week\' });',
+                                text: location.name
+                            },
                             that.timesToStr(location.weeks[0][today].times)
                         );
                     });
-                    contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
+                    contentStr += '</tbody>';
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2" class="rightalign"><a href="javascript: openingHours.setView({timespan:\'week\'});">Hele ugen</a></td></tr></tfoot></table>'; // TODO: link in tfoot to be inserted here!
                 }
             } else {
                 var libraryHours = that.getLibraryHours(library);
@@ -231,14 +235,16 @@ var OpeningHours = (function (document) {
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
-                    contentStr += '</tbody></table>';
+                    contentStr += '</tbody>';
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="#">Kort</a></div><div class="floatright"><a href="javascript:openingHours.setView({timespan:\'week\'});">Hele ugen</a></div></td></tr></tfoot></table>';
                 } else {
                     // --- [ lib week ] ---
                     contentStr += '<table>' + that.getThead(library, this.config.i18n.openHour) + '<tbody>';
                     this.config.i18n.weekdays.forEach(function (weekday, index) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
                     });
-                    contentStr += '</tbody></table>';
+                    contentStr += '</tbody>';
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="#">Kort</a></div><div class="floatright"><a href="javascript:openingHours.setView({library:\'all\', timespan: \'day\'});">Alle biblioteker</a></div></td></tr></tfoot></table>';
                 }
             } 
             return contentStr;
