@@ -71,6 +71,8 @@ var OpeningHours = (function (document) {
     var OpeningHours = function (data) {
         this.openingHours = data;
         this.targetElement = document.getElementById('openingHoursTargetDiv');
+        this.modalDialog = document.getElementById('openingHoursModalDiv');
+        this.modalBody;
         this.viewCache = {};
     };
 
@@ -89,6 +91,9 @@ var OpeningHours = (function (document) {
             for (var i=0; i < this.openingHours.locations.length; i += 1) {
                 libraryIndex[this.openingHours.locations[i].name] = i;
             }
+            //inject modal dialog DOM
+            this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div class="modal-body"></div>';
+            this.modalBody = this.modalDialog.lastChild;
             // initialize the view requested in the snippet
             this.setView({
                 library : this.config.library,
@@ -106,6 +111,16 @@ var OpeningHours = (function (document) {
             var that = this;
             Array.prototype.forEach.call(that.targetElement.childNodes, function (view) {
                 view.style.display = 'none';
+            });
+        },
+
+        turnOffAllModals : function () {
+            if (!this.targetElement) {
+                throw new NotInitializedError('Object hasn\'t been initialized yet.');
+            }
+            var that = this;
+            Array.prototype.forEach.call(that.modalBody.childNodes, function (dialog) {
+                dialog.style.display = 'none';
             });
         },
 
@@ -129,10 +144,18 @@ var OpeningHours = (function (document) {
             var that = this,
                 viewId = config.library + ':' + config.timespan;
             if (that.viewCache[viewId]) {
-                that.config.library = config.library;
-                that.config.timespan = config.timespan;
-                that.turnOffAllViews();
-                that.viewCache[viewId].style.display = 'block';
+                // We do have this one rendered in the viewCache already
+                if (that.viewCache[viewId].parentNode === that.targetElement) {
+                    that.config.library = config.library;
+                    that.config.timespan = config.timespan;
+                    that.turnOffAllViews();
+                    that.viewCache[viewId].style.display = 'block';
+                } else {
+                    that.turnOffAllModals();
+                    that.viewCache[viewId].style.display = 'block';
+                    // XXX XXX XXX Dette skal gøres på den rigtige måde alt efter om der er bootstrap eller ej! :-O
+                    $('#openingHoursModalDiv').modal('show');
+                }
             } else {
                 try{
                     that.renderView(config.library, config.timespan);
@@ -160,7 +183,11 @@ var OpeningHours = (function (document) {
             newDiv.className = 'openingHoursView';
             newDiv.innerHTML = innerHTML;
             newDiv.style.display = 'none';
-            that.targetElement.appendChild(newDiv);
+            if ((timespan === 'map') || (library === 'all' && timespan === 'week')) {
+                that.modalBody.appendChild(newDiv);
+            } else {
+                that.targetElement.appendChild(newDiv);
+            }
             that.viewCache[library + ':' + timespan] = newDiv;
         },
 
@@ -180,21 +207,21 @@ var OpeningHours = (function (document) {
             // build the view for library_timespan
             contentStr = '';
             nextRowIsOdd = true;
-            if (!(timespan==='week' || timespan === 'day')) {
+            if (!(timespan==='week' || timespan === 'day' || timespan === 'map')) {
                 throw new ReferenceError('Requested timespan "' + timespan + '" is illegal. Try "day" or "week".', 'openingHours');
             }
             if (library === 'all') {
                 if (timespan === 'week') {
                     // --- [ all week ] ---
                     contentStr += '<table>' + that.getThead(
-                        this.config.i18n.library,
-                        this.config.i18n.weekdaysAbbr[0], // this looks like something that ought to be an array instead?
-                        this.config.i18n.weekdaysAbbr[1],
-                        this.config.i18n.weekdaysAbbr[2],
-                        this.config.i18n.weekdaysAbbr[3],
-                        this.config.i18n.weekdaysAbbr[4],
-                        this.config.i18n.weekdaysAbbr[5],
-                        this.config.i18n.weekdaysAbbr[6]
+                        that.config.i18n.library,
+                        that.config.i18n.weekdaysAbbr[0], // this looks like something that ought to be an array instead?
+                        that.config.i18n.weekdaysAbbr[1],
+                        that.config.i18n.weekdaysAbbr[2],
+                        that.config.i18n.weekdaysAbbr[3],
+                        that.config.i18n.weekdaysAbbr[4],
+                        that.config.i18n.weekdaysAbbr[5],
+                        that.config.i18n.weekdaysAbbr[6]
                         ) + '<tbody>';
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
@@ -211,7 +238,7 @@ var OpeningHours = (function (document) {
                     contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
                 } else {
                     // --- [ all day ] ---
-                    contentStr += '<table>' + that.getThead(this.config.i18n.library, this.config.i18n.openHourToday) + '<tbody>';
+                    contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
@@ -223,28 +250,36 @@ var OpeningHours = (function (document) {
                         );
                     });
                     contentStr += '</tbody>';
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2" class="rightalign"><a href="javascript: openingHours.setView({timespan:\'week\'});">Hele ugen</a></td></tr></tfoot></table>'; // TODO: link in tfoot to be inserted here!
+                    // FIXME: Make a getTfoot helper to not have all this html in a string up here?
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2" class="rightalign"><a href="javascript: openingHours.setView({timespan:\'week\'});">' + that.config.i18n.allWeek + '</a></td></tr></tfoot></table>';
                 }
             } else {
                 var libraryHours = that.getLibraryHours(library);
                 if (!libraryHours) {
                     throw new ReferenceError('Requested library "' + library + '" does not exist in libCal.', 'openingHours');
                 }
-                if (timespan === 'day') {
+                switch (timespan) {
+                case 'day' :
                     // --- [ lib day ] ---
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody>';
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="#">Kort</a></div><div class="floatright"><a href="javascript:openingHours.setView({timespan:\'week\'});">Hele ugen</a></div></td></tr></tfoot></table>';
-                } else {
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="javascript:openingHours.setView({timespan:\'map\'});">' + that.config.i18n.map + '</a></div><div class="floatright"><a href="javascript:openingHours.setView({timespan:\'week\'});">' + that.config.i18n.allWeek + '</a></div></td></tr></tfoot></table>';
+                    break;
+                case 'week' :
                     // --- [ lib week ] ---
-                    contentStr += '<table>' + that.getThead(library, this.config.i18n.openHour) + '<tbody>';
-                    this.config.i18n.weekdays.forEach(function (weekday, index) {
+                    contentStr += '<table>' + that.getThead(library, that.config.i18n.openHour) + '<tbody>';
+                    that.config.i18n.weekdays.forEach(function (weekday, index) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
                     });
                     contentStr += '</tbody>';
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="#">Kort</a></div><div class="floatright"><a href="javascript:openingHours.setView({library:\'all\', timespan: \'day\'});">Alle biblioteker</a></div></td></tr></tfoot></table>';
+                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="javascript:openingHours.setView({timespan:\'map\'});">' + that.config.i18n.map + '</a></div><div class="floatright"><a href="javascript:openingHours.setView({library:\'all\', timespan: \'day\'});">' + that.config.i18n.allLibraries + '</a></div></td></tr></tfoot></table>';
+                    break;
+                case 'map' :
+                    // --- [ lib map ] ---
+                    debugger; // This is where the map div should be assembled
+                    break;
                 }
             } 
             return contentStr;

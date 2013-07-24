@@ -1,32 +1,32 @@
-#openingHoursTargetDiv table{
+#openingHoursModalDiv table, #openingHoursTargetDiv table{
     width: 100%;
     font-size:11px; font-family: verdana, arial, helvetica, sans-serif; /* FIXME: remember to remove! */
 }
-#openingHoursTargetDiv table th{
+#openingHoursModalDiv table th, #openingHoursTargetDiv table th{
     color: #fff;
     text-align: left;
     padding: 5px;
     font-weight: normal;
 }
-#openingHoursTargetDiv table th.first{
+#openingHoursModalDiv table th.first, #openingHoursTargetDiv table th.first{
     -webkit-border-top-left-radius: 5px;
     -moz-border-radius-topleft: 5px;
     border-top-left-radius: 5px;
     width: 50%;
 }
-#openingHoursTargetDiv table th.last{
+#openingHoursModalDiv table th.last, #openingHoursTargetDiv table th.last{
     -webkit-border-top-right-radius: 5px;
     -moz-border-radius-topright: 5px;
     border-top-right-radius: 5px;
 }
-#openingHoursTargetDiv table td{
+#openingHoursModalDiv table td, #openingHoursTargetDiv table td{
     padding: 2px 5px;
 }
-#openingHoursTargetDiv table tr td.timeField{
+#openingHoursModalDiv table tr td.timeField, #openingHoursTargetDiv table tr td.timeField{
     text-align: center;
     white-space: nowrap;
 }
-#openingHoursTargetDiv table tr td.rightalign{
+#openingHoursModalDiv table tr td.rightalign, #openingHoursTargetDiv table tr td.rightalign{
     text-align: right;
 }
 #openingHoursTargetDiv .floatleft{
@@ -35,23 +35,27 @@
 #openingHoursTargetDiv .floatright{
     float: right;
 }
-#openingHoursTargetDiv table tr.odd td{
+#openingHoursModalDiv table tr.odd td, #openingHoursTargetDiv table tr.odd td{
     background-color: #cccccc;
 }
-#openingHoursTargetDiv table tr.even td{
+#openingHoursModalDiv table tr.even td, #openingHoursTargetDiv table tr.even td{
     background-color: #eaeaea;
 }
-#openingHoursTargetDiv table tr.standard th{
+#openingHoursModalDiv table tr.standard th, #openingHoursTargetDiv table tr.standard th{
     background-color: rgb(175, 3, 3); /* the red color from the mockup */
 }
 /* NOTE: Hardcoded color schemes copy pasted from www.kb.dk - this will need maintanance if colorschemes on www.kb.dk changes! */
-#openingHoursTargetDiv table tr.standard01 th{
+#openingHoursModalDiv table tr.standard01 th, #openingHoursTargetDiv table tr.standard01 th{
     background-color: #FF7617;
 }
-#openingHoursTargetDiv table tr.standard02 th{
+#openingHoursModalDiv table tr.standard02 th, #openingHoursTargetDiv table tr.standard02 th{
     background-color: #78BFD2;
 }
-#openingHoursTargetDiv table tr.standard03 th{
+#openingHoursModalDiv table tr.standard03 th, #openingHoursTargetDiv table tr.standard03 th{
     background-color: #B7B806;
 }
-
+/* table corrections when bootstrap is loaded */
+#openingHoursModalDiv table, #openingHoursTargetDiv table{
+    border-collapse: separate;
+    border-spacing: 2px;
+}
