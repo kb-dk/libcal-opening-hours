@@ -250,8 +250,12 @@ var OpeningHours = (function (document) {
                         );
                     });
                     contentStr += '</tbody>';
-                    // FIXME: Make a getTfoot helper to not have all this html in a string up here?
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2" class="rightalign"><a href="javascript: openingHours.setView({timespan:\'week\'});">' + that.config.i18n.allWeek + '</a></td></tr></tfoot></table>';
+                    contentStr += that.getTfoot(
+                        {
+                            text : that.config.i18n.allWeek,
+                            href : 'javascript: openingHours.setView({timespan:\'week\'});'
+                        }
+                    );
                 }
             } else {
                 var libraryHours = that.getLibraryHours(library);
@@ -265,7 +269,15 @@ var OpeningHours = (function (document) {
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
                     contentStr += '</tbody>';
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="javascript:openingHours.setView({timespan:\'map\'});">' + that.config.i18n.map + '</a></div><div class="floatright"><a href="javascript:openingHours.setView({timespan:\'week\'});">' + that.config.i18n.allWeek + '</a></div></td></tr></tfoot></table>';
+                    contentStr += that.getTfoot(
+                        {
+                            text : that.config.i18n.allWeek,
+                            href : 'javascript:openingHours.setView({timespan:\'week\'});'
+                        }, {
+                            text : that.config.i18n.map,
+                            href : 'javascript:openingHours.setView({timespan:\'map\'});'
+                        }
+                    );
                     break;
                 case 'week' :
                     // --- [ lib week ] ---
@@ -274,7 +286,14 @@ var OpeningHours = (function (document) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
                     });
                     contentStr += '</tbody>';
-                    contentStr += '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2"><div class="floatleft"><a href="javascript:openingHours.setView({timespan:\'map\'});">' + that.config.i18n.map + '</a></div><div class="floatright"><a href="javascript:openingHours.setView({library:\'all\', timespan: \'day\'});">' + that.config.i18n.allLibraries + '</a></div></td></tr></tfoot></table>';
+                    contentStr += that.getTfoot(
+                        {
+                            text : that.config.i18n.allLibraries,
+                            href : 'javascript:openingHours.setView({library:\'all\', timespan: \'day\'});'
+                        }, {
+                            text : that.config.i18n.map,
+                            href : 'javascript:openingHours.setView({timespan:\'map\'});'
+                        });
                     break;
                 case 'map' :
                     // --- [ lib map ] ---
@@ -343,6 +362,20 @@ var OpeningHours = (function (document) {
                 }
                 return str + '<th class="last">' + arguments[arguments.length-1] + '</th></tr></thead>';
             }
+        },
+
+        /**
+         * Returns a html string with one or two links in the bottom of the table.
+         * Format: '<tfoot><tr><td colspan="2"><div class="floatright"><a href="arg1.href">arg1.text</a></div>[<div class="floatleft"><a href="arg2.href">arg2.text</a></div>]</td></tr></tfoot>'
+         * Also adds class first and last to the first and last header
+         */
+        getTfoot : function (rightLink, leftLink) {
+            var str = '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2">';
+            str += '<div class="floatright"><a href="' + rightLink.href + '">' + rightLink.text + '</a></div>';
+            if (leftLink) {
+                str += '<div class="floatleft"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
+            }
+            return str + '</td></tr></tfoot>';
         },
 
     };
