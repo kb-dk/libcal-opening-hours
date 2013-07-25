@@ -5,9 +5,9 @@ if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, context) {
         context = context || window;
         for (var i = 0; i < this.length; i += 1) {
-           fn.call(context, this[i], i, this);
+            fn.call(context, this[i], i, this);
         }
-    } 
+    }; 
 }
 
 var OpeningHours = (function (document) {
@@ -72,7 +72,6 @@ var OpeningHours = (function (document) {
         this.openingHours = data;
         this.targetElement = document.getElementById('openingHoursTargetDiv');
         this.modalDialog = document.getElementById('openingHoursModalDiv');
-        this.modalBody;
         this.viewCache = {};
     };
 
@@ -191,6 +190,7 @@ var OpeningHours = (function (document) {
             that.viewCache[library + ':' + timespan] = newDiv;
         },
 
+/*jshint scripturl:true*/
         /**
          * Assemble an innerHTML string for a specific view.
          * @param library {String} A string representation of the library that is requested. Needs to be the same as defined in libCal.Hours, or 'all' for all libraries.
@@ -243,7 +243,7 @@ var OpeningHours = (function (document) {
                     that.openingHours.locations.forEach(function (location) {
                         contentStr += getTr(
                             {
-                                href: 'javascript: openingHours.setView({library: \''+location.name+'\',timespan: \'week\' });',
+                                href: 'javascript: openingHours.setView({library: \'' + location.name + '\',timespan: \'week\' });',
                                 text: location.name
                             },
                             that.timesToStr(location.weeks[0][today].times)
@@ -284,6 +284,7 @@ var OpeningHours = (function (document) {
             } 
             return contentStr;
         },
+/*jshint scripturl:false*/
 
         // --- helper functions
         getLibraryHours : function (library) {
@@ -327,7 +328,8 @@ var OpeningHours = (function (document) {
         },
 
         /**
-         * Returns a html string where all arguments are wrapped in. Format: "<thead><tr><th>arg1</th><th>arg2</th>...</tr></thead>" tags.
+         * Returns a html string where all arguments are wrapped in.
+         * Format: '<thead><tr><th>arg1</th><th>arg2</th>...</tr></thead>'
          * Also adds class first and last to the first and last header
          */
         getThead : function () {
