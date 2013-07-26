@@ -18,6 +18,15 @@ var OpeningHours = (function (document) {
     newCssLinkElement.href = 'http://localhost:8002/openingHoursStyles.css';
     document.getElementsByTagName('head')[0].appendChild(newCssLinkElement);
 
+    if (typeof $ === 'function' && $('#openingHoursModalDiv') && $('#openingHoursModalDiv').modal) {
+        // bootstrap and jQuery (in some form) is present
+    } else {
+        // no bootstrap / jQuery
+        var modalDiv = document.getElementById('openingHoursModalDiv');
+        modalDiv.style.opacity = 0;
+        modalDiv.style.top = '-25%';
+    }
+
 // ===== [ private helper functions ] =====
     var ugedage = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'],
         weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -161,55 +170,120 @@ var OpeningHours = (function (document) {
             config = config || {};
             config.library = config.library || this.config.library || 'all';
             config.timespan = config.timespan || this.config.timespan || 'day';
-
             var that = this,
-                viewId = config.library + ':' + config.timespan;
-            if (that.viewCache[viewId]) {
-                // We do have this one rendered in the viewCache already
-                if (that.viewCache[viewId].parentNode === that.targetElement) {
+                viewId = ((config.timespan !== 'map') ? // we only want one google.map view in the cache (and just pans it around and sets/removes markers as we go along)!
+                    config.library + ':' + config.timespan :
+                    'map');
+
+            if (viewId === 'map' || viewId === 'all:week') {
+                // This is a modal dialog
+                if (that.viewCache[viewId]) {
+                    // We do have this one rendered in the viewCache already
+                    that.turnOffAllModals();
+                    that.viewCache[viewId].style.display = 'block';
+                    if (viewId === 'map'){
+                        // prepare the map
+                        var lib = this.getLibrary(config.library),
+                            position = new google.maps.LatLng(lib.lat, lib.long);
+                        that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+                        that.gmap.setZoom(15);
+                        that.gmap.setCenter(position); // FIXME: On the very first rendering this is centering in 0,0 on the map??
+                        that.gmapMarker.setPosition(position);
+                        that.gmapMarker.setAnimation(google.maps.Animation.DROP);
+                    }
+                    that.showModal();
+                } else {
+                    // view has to be rendered
+                    try{
+                        that.renderView(
+                            config.library,
+                            config.timespan,
+                            function (ev, map){
+                                that.setView(config);
+                            }
+                        );
+                    } catch (e) {
+                        if (e instanceof ReferenceError) {
+                            console.warn(e.message);
+                        } else {
+                            throw e;
+                        }
+                    }
+                }
+            } else {
+                // This is a plain view
+                if (that.viewCache[viewId]) {
+                    // We do have this one rendered in the viewCache already
                     that.config.library = config.library;
                     that.config.timespan = config.timespan;
                     that.turnOffAllViews();
                     that.viewCache[viewId].style.display = 'block';
                 } else {
-                    that.turnOffAllModals();
-                    that.viewCache[viewId].style.display = 'block';
-                    // XXX XXX XXX Dette skal gøres på den rigtige måde alt efter om der er bootstrap eller ej! :-O
-                    $('#openingHoursModalDiv').modal('show');
-                }
-            } else {
-                try{
-                    that.renderView(config.library, config.timespan);
-                    that.setView({
-                        library : config.library,
-                        timespan : config.timespan
-                    });
-                } catch (e) {
-                    if (e instanceof ReferenceError) {
-                        console.warn(e.message);
-                    } else {
-                        throw e;
+                    try{
+                        that.renderView(
+                            config.library, 
+                            config.timespan,
+                            function () {
+                                that.setView(config);
+                            }
+                        );
+                    } catch (e) {
+                        if (e instanceof ReferenceError) {
+                            console.warn(e.message);
+                        } else {
+                            throw e;
+                        }
                     }
                 }
             }
         },
 
-        renderView : function (library, timespan) {
+        renderView : function (library, timespan, cb) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
             }
             var that = this,
-                innerHTML = that.assembleView(library, timespan),
+                innerHTML,
+                newDiv;
+            if (timespan === 'map') {
+                var library = that.getLibrary(library);
                 newDiv = document.createElement('div');
-            newDiv.className = 'openingHoursView';
-            newDiv.innerHTML = innerHTML;
-            newDiv.style.display = 'none';
-            if ((timespan === 'map') || (library === 'all' && timespan === 'week')) {
+                newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
+                $(newDiv).gmap().bind('init', function (ev, map) { // FIXME: gmap() is a jQuery shortcut - you should make a real google.maps.Map instead (and probably disable streetview)!
+                    that.gmap = map;
+                    that.gmapMarker = new google.maps.Marker({
+                            //position : new google.maps.LatLng(lib.lat, lib.long),
+                            animation : google.maps.Animation.DROP,
+                            map : that.gmap
+                        });
+                    if (cb) {
+                        cb(ev, map);
+                    }
+                });
                 that.modalBody.appendChild(newDiv);
+                // every time the modal is shown, the map should resize
+                $(that.modalDialog).one('shown', function () { // FIXME: All this have to work without jQuery and bootstrap too! :-S
+                    if (that.gmap) {
+                        google.maps.event.trigger(that.gmap, 'resize');
+                    }
+                });
+                that.viewCache['map'] = newDiv;
             } else {
-                that.targetElement.appendChild(newDiv);
+                innerHTML = that.assembleView(library, timespan);
+                newDiv = document.createElement('div');
+                newDiv.className = 'openingHoursView';
+                newDiv.innerHTML = innerHTML;
+                newDiv.style.display = 'none';
+                if (library === 'all' && timespan === 'week') {
+                    that.modalBody.appendChild(newDiv);
+                } else {
+                    that.targetElement.appendChild(newDiv);
+                }
+                that.viewCache[library + ':' + timespan] = newDiv;
+                if (cb) {
+                    cb(); // NOTE: rendering all:week recalls setView after rendering in a callback 
+                }
             }
-            that.viewCache[library + ':' + timespan] = newDiv;
         },
 
 /*jshint scripturl:true*/
@@ -257,7 +331,7 @@ var OpeningHours = (function (document) {
                             that.timesToStr(location.weeks[0].Sunday.times)
                         );
                     });
-                    contentStr += '</tbody></table>'; // TODO: link in tfoot to be inserted here!
+                    contentStr += '</tbody></table>';
                 } else {
                     // --- [ all day ] ---
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
@@ -280,46 +354,48 @@ var OpeningHours = (function (document) {
                     );
                 }
             } else {
-                var libraryHours = that.getLibraryHours(library);
-                if (!libraryHours) {
-                    throw new ReferenceError('Requested library "' + library + '" does not exist in libCal.', 'openingHours');
+                var libraryObj, libraryHours;
+                try {
+                    libraryObj = that.getLibrary(library);
+                    libraryHours = that.getLibraryHours(libraryObj);
+                } catch (e) {
+                    if (e instanceof ReferenceError) {
+                        throw e;
+                    }
                 }
                 switch (timespan) {
                 case 'day' :
                     // --- [ lib day ] ---
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
-                    contentStr += getTr(library, that.timesToStr(libraryHours.weeks[0][today].times));
+                    contentStr += getTr(library, that.timesToStr(libraryHours[today].times));
                     contentStr += '</tbody>';
                     contentStr += that.getTfoot(
                         {
                             text : that.config.i18n.allWeek,
                             href : 'javascript:openingHours.setView({timespan:\'week\'});'
-                        }, {
+                        }, (libraryObj.long ? {
                             text : that.config.i18n.map,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
-                        }
+                        } : undefined)
                     );
                     break;
                 case 'week' :
                     // --- [ lib week ] ---
                     contentStr += '<table>' + that.getThead(library, that.config.i18n.openHour) + '<tbody>';
                     that.config.i18n.weekdays.forEach(function (weekday, index) {
-                        contentStr += getTr(weekday, that.timesToStr(libraryHours.weeks[0][weekdays[(index + 1) % 7]].times));
+                        contentStr += getTr(weekday, that.timesToStr(libraryHours[weekdays[(index + 1) % 7]].times));
                     });
                     contentStr += '</tbody>';
                     contentStr += that.getTfoot(
                         {
                             text : that.config.i18n.allLibraries,
                             href : 'javascript:openingHours.setView({library:\'all\', timespan: \'day\'});'
-                        }, {
+                        }, (libraryObj.long ? {
                             text : that.config.i18n.map,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
-                        });
-                    break;
-                case 'map' :
-                    // --- [ lib map ] ---
-                    debugger; // This is where the map div should be assembled
+                        } : undefined)
+                    );
                     break;
                 }
             } 
@@ -328,16 +404,26 @@ var OpeningHours = (function (document) {
 /*jshint scripturl:false*/
 
         // --- helper functions
-        getLibraryHours : function (library) {
-            if (!this.openingHours) {
-                throw new NotInitializedError('Object hasn\'t been initialized yet.');
-            }
+        getLibrary : function (library) {
             var that = this;
             for (var i = 0; i < that.openingHours.locations.length; i += 1) {
                 if (that.openingHours.locations[i].name === library) {
                     return that.openingHours.locations[i];
                 }
             }
+            throw new ReferenceError('Requested library "' + library + '" does not exist in libCal.', 'openingHours');
+        },
+
+        /**
+         * Get library hours split up in weekdays for a single library.
+         * @param library {string|Object} If string, the opening hours of the library with that name is returned. If Object, that librarys openingHours is returned.
+         * @return {Object} Object with all opening hours for each weekday
+         */
+        getLibraryHours : function (library) {
+            if ((typeof library === 'string') || (library instanceof String)) {
+                library = this.getLibrary(library);
+            }
+            return library.weeks[0];
         },
 
         ampmTo24 : function (str) { // FIXME: I don't think this need to be a member variable?
