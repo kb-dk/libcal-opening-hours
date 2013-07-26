@@ -123,6 +123,28 @@ var OpeningHours = (function (document) {
             });
         },
 
+        showModal : function () {
+            var modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
+            if (modalDiv && modalDiv.modal) {
+                modalDiv.modal('show');
+            } else {
+                console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+                modalDiv.style.opacity = 1;
+                modalDiv.style.top = '10%';
+            }
+        },
+
+        hideModal : function () {
+            var modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
+            if (modalDiv && modalDiv.modal) {
+                modalDiv.modal('hide');
+            } else {
+                console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+                modalDiv.style.opacity = 0;
+                modalDiv.style.top = '-25%';
+            }
+        },
+
         /**
          * Set view to a desired view. Any other views will be turned off but cached for later use.
          * If a view isn't rendered yet, this method initiates a render of the chosen view.
