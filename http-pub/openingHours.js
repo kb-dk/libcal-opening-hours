@@ -150,7 +150,7 @@ var OpeningHours = (function (document) {
          * If a view isn't rendered yet, this method initiates a render of the chosen view.
          * @param config {Object} Config object containing zero, one or two of the following parameters:
          *  - library {String} Optional A string representation of the library that is requested. Needs to be the same as defined in libCal.Hours, or 'all' for all libraries.
-         *  - timespan {String} Optional The timespan to view. Either 'day' or 'week'.
+         *  - timespan {String} Optional The timespan to view. Either 'day', 'week' or 'map'. (map shows a modal dialog with the map)
          * if one (or more) of the parameters is not set, it will fall back on the current state of that parameter (set in this.config)
          * if nothing is set, it will fall back on 'all', 'day'
          */
