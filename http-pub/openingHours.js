@@ -1,4 +1,4 @@
-/*global window, console*/
+/*global window, console, $, google*/
 
 // polyfill forEach
 if (!Array.prototype.forEach) {
@@ -8,6 +8,25 @@ if (!Array.prototype.forEach) {
             fn.call(context, this[i], i, this);
         }
     }; 
+}
+
+function loadAdditionalJavascript(url, callback) { // TODO: We might wanna shovel this into window.OpeningHours to avoid cluttering windows?
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = url;
+    var entry = document.getElementsByTagName('script')[0];
+    entry.parentNode.insertBefore(script, entry);
+    script.onload = script.onreadystatechange = function () {
+        var rdyState = script.readyState;
+        if (!rdyState || /complete|loaded/.test(rdyState)) {
+            if (callback) {
+                callback();
+            }
+            // avoid IE memoryleak http://mng.bz/W8fx
+            script.onload = null;
+            script.readyState = null;
+        }
+    };
 }
 
 var OpeningHours = (function (document) {
@@ -198,7 +217,7 @@ var OpeningHours = (function (document) {
                         that.renderView(
                             config.library,
                             config.timespan,
-                            function (ev, map){
+                            function (){
                                 that.setView(config);
                             }
                         );
@@ -246,19 +265,21 @@ var OpeningHours = (function (document) {
                 innerHTML,
                 newDiv;
             if (timespan === 'map') {
-                var library = that.getLibrary(library);
+                var lib = that.getLibrary(library);
                 newDiv = document.createElement('div');
                 newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
-                $(newDiv).gmap().bind('init', function (ev, map) { // FIXME: gmap() is a jQuery shortcut - you should make a real google.maps.Map instead (and probably disable streetview)!
-                    that.gmap = map;
-                    that.gmapMarker = new google.maps.Marker({
-                            //position : new google.maps.LatLng(lib.lat, lib.long),
-                            animation : google.maps.Animation.DROP,
-                            map : that.gmap
-                        });
-                    if (cb) {
-                        cb(ev, map);
-                    }
+                var mapOptions =  {
+                        center: new google.maps.LatLng(lib.lat, lib.long),
+                        zoom: 8,
+                        streetViewControl: false,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    },
+                    map = new google.maps.Map(newDiv, mapOptions);
+                that.gmap = map;
+                that.gmapMarker = new google.maps.Marker({
+                    position : new google.maps.LatLng(lib.lat, lib.long),
+                    animation : google.maps.Animation.DROP,
+                    map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
                 // every time the modal is shown, the map should resize
@@ -268,6 +289,9 @@ var OpeningHours = (function (document) {
                     }
                 });
                 that.viewCache['map'] = newDiv;
+                if (cb) {
+                    cb();
+                }
             } else {
                 innerHTML = that.assembleView(library, timespan);
                 newDiv = document.createElement('div');
@@ -488,11 +512,18 @@ var OpeningHours = (function (document) {
 
     };
 
+    // this is needed for google.maps to be loaded correctly asyncronuosly (but it is pretty hideous to clutter the global object up like this?)
+    OpeningHours.initializeGMaps = function () {};
+
+    OpeningHours.loadOpeningHours = function (data) {
+        window.openingHours = new OpeningHours(data);
+        window.openingHours.init(OpeningHours.config);
+    };
+
     return OpeningHours;
 })(window.document);
 
-function loadOpeningHours001(data) { // FIXME: This should be done more dynamic - right now it loads data for one week for all libraries once. Preferable it should be managing what to load (no need to fetch all libs all week every time?), and load more on the fly when necessary. If the data is small and the structure of the different feeds is diverse, it might not be worth the effort though?
-    window.openingHours = new OpeningHours(data);
-    window.openingHours.init(OpeningHours.config);
+// load google.maps if they are not present
+if (!window.google || !window.google.maps) {
+    loadAdditionalJavascript('//maps.googleapis.com/maps/api/js?sensor=false&callback=OpeningHours.initializeGMaps');
 }
-

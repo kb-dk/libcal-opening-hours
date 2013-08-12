@@ -12,10 +12,7 @@
     </style>
     <!-- start 3rdparty loading FIXME: remember you can't have these everywhere! -->
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-    <link href="/mapdefault.css" rel="stylesheet">
-    <script src="//maps.google.com/maps/api/js?sensor=false"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script src="/3rdparty/gmap/ui/jquery.ui.map.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
     <!-- end 3rdparty loading -->
 </head>
@@ -28,7 +25,7 @@
         <script type="text/javascript">
             OpeningHours.config = {
                 // Please notice that the view library: 'all', timespan: 'week' is to wide to put in one column!
-                library: 'HUM', // 'all' or the library name as it is defined in LibCal (eg. 'HUM', 'KUB Nord' etc.)
+                library: 'Den Sorte Diamant', // 'all' or the library name as it is defined in LibCal (eg. 'HUM', 'KUB Nord' etc.)
                 timespan: 'day', // 'week' or 'day'
                 colorScheme: 'standard03', // 'standard01', 'standard02', 'standard03'
                 i18n: {
@@ -45,7 +42,7 @@
                 }
             }
         </script>
-        <script src="http://api.libcal.com/api_hours_grid.php?iid=1069&format=json&weeks=1&callback=loadOpeningHours001" async></script>
+        <script src="http://api.libcal.com/api_hours_grid.php?iid=1069&format=json&weeks=1&callback=OpeningHours.loadOpeningHours" async></script>
         <p>Did it show up?</p>
     </div>
 </body>
