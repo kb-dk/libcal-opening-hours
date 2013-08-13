@@ -98,6 +98,12 @@ var OpeningHours = (function (document) {
 // ===== [ OpeningHours Object ] =====
     var OpeningHours = function (data) {
         this.openingHours = data;
+        // generating google.maps.LatLng positions for all libraries with lat:long attributes
+        this.openingHours.locations.forEach(function (location) {
+            if (location.lat.length && location.long.length) {
+                location.latLng = new google.maps.LatLng(location.lat, location.long);
+            }
+        });
         this.targetElement = document.getElementById('openingHoursTargetDiv');
         this.modalDialog = document.getElementById('openingHoursModalDiv');
         this.viewCache = {};
