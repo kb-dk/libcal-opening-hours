@@ -98,12 +98,6 @@ var OpeningHours = (function (document) {
 // ===== [ OpeningHours Object ] =====
     var OpeningHours = function (data) {
         this.openingHours = data;
-        // generating google.maps.LatLng positions for all libraries with lat:long attributes
-        this.openingHours.locations.forEach(function (location) {
-            if (location.lat.length && location.long.length) {
-                location.latLng = new google.maps.LatLng(location.lat, location.long);
-            }
-        });
         this.targetElement = document.getElementById('openingHoursTargetDiv');
         this.modalDialog = document.getElementById('openingHoursModalDiv');
         this.viewCache = {};
@@ -288,6 +282,15 @@ var OpeningHours = (function (document) {
                 innerHTML,
                 newDiv;
             if (timespan === 'map') {
+                if (that.openingHours.hasNoLatLngCoordsYet) { // first time a map is rendered, all library coordinates are translated to google.maps.LatLng
+                    // generating google.maps.LatLng positions for all libraries with lat:long attributes
+                    this.openingHours.locations.forEach(function (location) {
+                        if (location.lat.length && location.long.length) {
+                            location.latLng = new google.maps.LatLng(location.lat, location.long);
+                        }
+                    });
+                    delete that.openingHours.hasNoLatLngCoordsYet;
+                }
                 newDiv = document.createElement('div');
                 newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
                 var mapOptions =  {
@@ -538,6 +541,7 @@ var OpeningHours = (function (document) {
 
     OpeningHours.loadOpeningHours = function (data) {
         window.openingHours = new OpeningHours(data);
+        window.openingHours.openingHours.hasNoLatLngCoordsYet = true; // flag to first time renderView renders a map
         window.openingHours.init(OpeningHours.config);
     };
 
