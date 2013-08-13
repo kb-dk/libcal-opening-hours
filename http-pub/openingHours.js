@@ -157,6 +157,7 @@ var OpeningHours = (function (document) {
                 modalDiv.modal('show');
             } else {
                 console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+                modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 1;
                 modalDiv.style.top = '10%';
             }
@@ -168,6 +169,7 @@ var OpeningHours = (function (document) {
                 modalDiv.modal('hide');
             } else {
                 console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+                modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
             }
