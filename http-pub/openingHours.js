@@ -152,19 +152,31 @@ var OpeningHours = (function (document) {
         },
 
         showModal : function () {
-            var modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
+            var that = this,
+                modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('show');
             } else {
                 console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
+                modalDiv.style.display = 'block';
                 modalDiv.style.opacity = 1;
                 modalDiv.style.top = '10%';
+                if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
+                    that.overlay = document.createElement('div');
+                    that.overlay.className = 'openingHoursOverlay';
+                    modalDiv.getElementsByClassName('close')[0].addEventListener('click', function () { // also attach an eventhandler for the close button
+                        that.hideModal.call(that);
+                    });
+                    document.body.appendChild(this.overlay);
+                } 
+                that.overlay.style.display = 'block';
             }
         },
 
         hideModal : function () {
-            var modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
+            var that = this,
+                modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('hide');
             } else {
@@ -172,6 +184,8 @@ var OpeningHours = (function (document) {
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
+                window.setTimeout(function () { modalDiv.style.display = 'none'; }, 300);
+                that.overlay.style.display = 'none';
             }
         },
 
