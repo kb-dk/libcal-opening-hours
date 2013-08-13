@@ -216,6 +216,9 @@ var OpeningHours = (function (document) {
                     config.library + ':' + config.timespan :
                     'map');
 
+            that.currentLib = config.library !== 'all' ? that.getLibrary(config.library) : null; // NOTE: that.currentLib = the library object unless 'all' -> currentLib = null
+            that.currentTimespan = config.timespan;
+
             if (viewId === 'map' || viewId === 'all:week') {
                 // This is a modal dialog
                 if (that.viewCache[viewId]) {
@@ -224,12 +227,10 @@ var OpeningHours = (function (document) {
                     that.viewCache[viewId].style.display = 'block';
                     if (viewId === 'map'){
                         // prepare the map
-                        var lib = this.getLibrary(config.library),
-                            position = new google.maps.LatLng(lib.lat, lib.long);
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
-                        that.gmap.setCenter(position); // FIXME: On the very first rendering this is centering in 0,0 on the map??
-                        that.gmapMarker.setPosition(position);
+                        that.gmap.setCenter(that.currentLib.latLng); // FIXME: On the very first rendering this is centering in 0,0 on the map??
+                        that.gmapMarker.setPosition(that.currentLib.latLng);
                         that.gmapMarker.setAnimation(google.maps.Animation.DROP);
                     }
                     that.showModal();
@@ -287,11 +288,10 @@ var OpeningHours = (function (document) {
                 innerHTML,
                 newDiv;
             if (timespan === 'map') {
-                var lib = that.getLibrary(library);
                 newDiv = document.createElement('div');
                 newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
                 var mapOptions =  {
-                        center: new google.maps.LatLng(lib.lat, lib.long),
+                        center: that.currentLib.latLng,
                         zoom: 8,
                         streetViewControl: false,
                         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -299,7 +299,7 @@ var OpeningHours = (function (document) {
                     map = new google.maps.Map(newDiv, mapOptions);
                 that.gmap = map;
                 that.gmapMarker = new google.maps.Marker({
-                    position : new google.maps.LatLng(lib.lat, lib.long),
+                    position : that.currentLib.latLng,
                     animation : google.maps.Animation.DROP,
                     map : that.gmap
                 });
@@ -400,10 +400,9 @@ var OpeningHours = (function (document) {
                     );
                 }
             } else {
-                var libraryObj, libraryHours;
+                var libraryHours;
                 try {
-                    libraryObj = that.getLibrary(library);
-                    libraryHours = that.getLibraryHours(libraryObj);
+                    libraryHours = that.getLibraryHours(that.currentLib);
                 } catch (e) {
                     if (e instanceof ReferenceError) {
                         throw e;
