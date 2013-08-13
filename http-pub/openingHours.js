@@ -307,10 +307,10 @@ var OpeningHours = (function (document) {
                     map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
-                // every time the modal is shown, the map should resize
-                $(that.modalDialog).one('shown', function () { // FIXME: All this have to work without jQuery and bootstrap too! :-S
-                    if (that.gmap) {
+                $(that.modalDialog).on('shown', function () { // FIXME: Figure out how to set this up without the use of jQuery!!
+                    if (that.currentTimespan === 'map') { // TODO: Could also test for that.currentLib?
                         google.maps.event.trigger(that.gmap, 'resize');
+                        that.gmap.setCenter(new google.maps.LatLng(that.currentLib.lat, that.currentLib.long));
                     }
                 });
                 that.viewCache['map'] = newDiv;
