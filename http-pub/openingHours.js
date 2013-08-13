@@ -190,7 +190,7 @@ var OpeningHours = (function (document) {
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
-                window.setTimeout(function () { modalDiv.style.display = 'none'; }, 300);
+                window.setTimeout(function () { modalDiv.style.display = 'none'; }, 300); // FIXME: This ought to be on transition end? :-/
                 that.overlay.style.display = 'none';
             }
         },
@@ -534,7 +534,7 @@ var OpeningHours = (function (document) {
 
     };
 
-    // this is needed for google.maps to be loaded correctly asyncronuosly (but it is pretty hideous to clutter the global object up like this?)
+    // this is needed for google.maps to be loaded correctly asynchronously
     OpeningHours.initializeGMaps = function () {};
 
     OpeningHours.loadOpeningHours = function (data) {
