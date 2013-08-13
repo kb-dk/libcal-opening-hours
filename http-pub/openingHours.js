@@ -420,7 +420,7 @@ var OpeningHours = (function (document) {
                         {
                             text : that.config.i18n.allWeek,
                             href : 'javascript:openingHours.setView({timespan:\'week\'});'
-                        }, (libraryObj.long ? {
+                        }, (that.currentLib.lat && that.currentLib.long ? {
                             text : that.config.i18n.map,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
                         } : undefined)
@@ -437,7 +437,7 @@ var OpeningHours = (function (document) {
                         {
                             text : that.config.i18n.allLibraries,
                             href : 'javascript:openingHours.setView({library:\'all\', timespan: \'day\'});'
-                        }, (libraryObj.long ? {
+                        }, (that.currentLib.lat && that.currentLib.long ? {
                             text : that.config.i18n.map,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
                         } : undefined)
