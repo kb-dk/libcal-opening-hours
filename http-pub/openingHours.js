@@ -524,15 +524,16 @@ var OpeningHours = (function (document) {
          * Also adds class first and last to the first and last header
          */
         getThead : function () {
-            var str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
+            var overruleLibCol = this.config.useLibraryColors && this.currentLib && this.currentLib.color.length ? ' style="background-color:' + this.currentLib.color + '"' : '',
+                str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
             if (arguments.length < 2) {
-                return str + '<th class="first last">' + (arguments[0] || '') + '</th></tr></thead>';
+                return str + '<th class="first last"' + overruleLibCol + '>' + (arguments[0] || '') + '</th></tr></thead>';
             } else {
-                str += '<th class="first">' + arguments[0] + '</th>';
+                str += '<th class="first"' + overruleLibCol + '>' + arguments[0] + '</th>';
                 for (var i = 1; i < arguments.length - 1; i += 1) {
-                    str += '<th>' + arguments[i] + '</th>';
+                    str += '<th' + overruleLibCol + '>' + arguments[i] + '</th>';
                 }
-                return str + '<th class="last">' + arguments[arguments.length-1] + '</th></tr></thead>';
+                return str + '<th class="last"' + overruleLibCol + '>' + arguments[arguments.length-1] + '</th></tr></thead>';
             }
         },
 
