@@ -120,6 +120,7 @@ var OpeningHours = (function (document) {
             }
             //inject modal dialog DOM
             this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div class="modal-body"></div>';
+            this.modalDialogHeader = document.getElementById('openingHoursModalLabel');
             this.modalBody = this.modalDialog.lastChild;
             // initialize the view requested in the snippet
             this.setView({
@@ -220,12 +221,17 @@ var OpeningHours = (function (document) {
                     that.turnOffAllModals();
                     that.viewCache[viewId].style.display = 'block';
                     if (viewId === 'map'){
+                        // set the headline
+                        that.modalDialogHeader.innerHTML = that.currentLib.name;
                         // prepare the map
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
                         that.gmap.setCenter(that.currentLib.latLng); // FIXME: On the very first rendering this is centering in 0,0 on the map??
                         that.gmapMarker.setPosition(that.currentLib.latLng);
                         that.gmapMarker.setAnimation(google.maps.Animation.DROP);
+                    } else {
+                        // set the headline
+                        that.modalDialogHeader.innerHTML = that.config.i18n.openHour;
                     }
                     that.showModal();
                 } else {
