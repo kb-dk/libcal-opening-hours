@@ -5,7 +5,6 @@ TODO
 * ensure that everything is loaded as dynamic as possible, and that the loader script is as tidy and human readable as possible
 * the modals only stacks the cached views under modal-body, but they should be containing the modal-header as well
 * the modal map view should contain some data about the library too, like library.description, library.contact and library.url (footnote and name in the modal head?)
-* the table headers should use the librarys color (or at least a config option should force them to be used?)
 
 Known bugs
 ==========
