@@ -11,6 +11,8 @@
     box-shadow: 0 3px 7px rgba(0,0,0,.3);
     trasition: opacity .1s linear, top .1s ease-out !important;
     -webkit-transition: opacity .1s linear, top .1s ease-out !important;
+    -moz-transition: opacity .1s linear, top .1s ease-out !important;
+    -ms-transition: opacity .1s linear, top .1s ease-out !important;
 }
 #openingHoursModalDiv .close{
     color: #000;
