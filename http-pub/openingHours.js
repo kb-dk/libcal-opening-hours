@@ -120,7 +120,7 @@ var OpeningHours = (function (document) {
             }
             //inject modal dialog DOM
             this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div class="modal-body"></div>';
-            this.modalDialogHeader = document.getElementById('openingHoursModalLabel');
+            this.modalHeader = document.getElementById('openingHoursModalLabel');
             this.modalBody = this.modalDialog.lastChild;
             // initialize the view requested in the snippet
             this.setView({
@@ -222,7 +222,7 @@ var OpeningHours = (function (document) {
                     that.viewCache[viewId].style.display = 'block';
                     if (viewId === 'map'){
                         // set the headline
-                        that.modalDialogHeader.innerHTML = that.currentLib.name;
+                        that.modalHeader.innerHTML = that.currentLib.name;
                         // prepare the map
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
@@ -231,7 +231,7 @@ var OpeningHours = (function (document) {
                         that.gmapMarker.setAnimation(google.maps.Animation.DROP);
                     } else {
                         // set the headline
-                        that.modalDialogHeader.innerHTML = that.config.i18n.openHour;
+                        that.modalHeader.innerHTML = that.config.i18n.openHour;
                     }
                     that.showModal();
                 } else {
