@@ -159,11 +159,13 @@ var OpeningHours = (function (document) {
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('show');
             } else {
-                console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+console.log('no jQuery and/or bootstrap in here!');
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.display = 'block';
-                modalDiv.style.opacity = 1;
-                modalDiv.style.top = '10%';
+                window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
+                    modalDiv.style.opacity = 1;
+                    modalDiv.style.top = '10%';
+                }, 50);
                 if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
                     that.overlay = document.createElement('div');
                     that.overlay.className = 'openingHoursOverlay';
