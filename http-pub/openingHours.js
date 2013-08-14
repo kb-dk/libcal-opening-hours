@@ -176,6 +176,7 @@ console.log('no jQuery and/or bootstrap in here!');
                 } 
                 that.overlay.style.display = 'block';
             }
+            that.modalDialogIsVisible = true;
         },
 
         hideModal : function () {
@@ -184,13 +185,13 @@ console.log('no jQuery and/or bootstrap in here!');
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('hide');
             } else {
-                console.log('no jQuery and/or bootstrap in here ... gotta do it by hand!');
+console.log('no jQuery or bootstrap in here!');
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
-                window.setTimeout(function () { modalDiv.style.display = 'none'; }, 300); // FIXME: This ought to be on transition end? :-/
                 that.overlay.style.display = 'none';
             }
+            that.modalDialogIsVisible = false;
         },
 
         /**
@@ -325,10 +326,19 @@ console.log('no jQuery and/or bootstrap in here!');
                     map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
-                $(that.modalDialog).on('shown', function () { // FIXME: Figure out how to set this up without the use of jQuery!!
-                    if (that.currentTimespan === 'map') { // TODO: Could also test for that.currentLib?
-                        google.maps.event.trigger(that.gmap, 'resize');
-                        that.gmap.setCenter(new google.maps.LatLng(that.currentLib.lat, that.currentLib.long));
+                // When the modal is shown - if there is a map, resize it (so it will always fit), if it has been scrolled up (hide) display=none the modalDialog
+                // NOTE: If we take it of before the top transition ends, the transition fails (in chrome 28)
+                that.modalDialog.addEventListener('transitionend', function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
+                    if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
+                        if (that.modalDialogIsVisible) {
+                            if (that.currentTimespan === 'map') {
+                                google.maps.event.trigger(that.gmap, 'resize');
+                                that.gmap.setCenter(that.currentLib.latLng);
+                            }
+                        } else {
+                              that.modalDialog.style.display = 'none';
+                        }
+                        e.stopPropagation();
                     }
                 });
                 that.viewCache['map'] = newDiv;
