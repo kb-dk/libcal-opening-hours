@@ -23,6 +23,9 @@
     font-size: 20px;
     font-weight: bold;
 }
+#openingHoursModalInfobox{
+    padding: 15px 15px 0 15px;
+}
 #openingHoursModalDiv table, #openingHoursTargetDiv table{
     width: 100%;
     font-size:11px; font-family: verdana, arial, helvetica, sans-serif; /* FIXME: remember to remove! */

@@ -119,8 +119,9 @@ var OpeningHours = (function (document) {
                 libraryIndex[this.openingHours.locations[i].name] = i;
             }
             //inject modal dialog DOM
-            this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div class="modal-body"></div>';
+            this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div id="openingHoursModalInfobox"></div><div class="modal-body"></div>';
             this.modalHeader = document.getElementById('openingHoursModalLabel');
+            this.modalInfobox = document.getElementById('openingHoursModalInfobox');
             this.modalBody = this.modalDialog.lastChild;
             // initialize the view requested in the snippet
             this.setView({
@@ -223,6 +224,13 @@ var OpeningHours = (function (document) {
                     if (viewId === 'map'){
                         // set the headline
                         that.modalHeader.innerHTML = that.currentLib.name;
+                        // set infobox
+                        if (that.currentLib.desc) {
+                            that.modalInfobox.innerHTML = that.currentLib.desc;
+                            that.modalInfobox.style.display = 'block';
+                        } else {
+                            that.modalInfobox.style.display = 'none';
+                        }
                         // prepare the map
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
@@ -232,6 +240,8 @@ var OpeningHours = (function (document) {
                     } else {
                         // set the headline
                         that.modalHeader.innerHTML = that.config.i18n.openHour;
+                        // hide the infobox
+                        that.modalInfobox.style.display = 'none';
                     }
                     that.showModal();
                 } else {
