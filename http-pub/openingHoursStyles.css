@@ -36,9 +36,6 @@
     font-size: 20px;
     font-weight: bold;
 }
-#openingHoursModalInfobox{
-    padding: 15px 15px 0 15px;
-}
 #openingHoursModalDiv table, #openingHoursTargetDiv table{
     width: 100%;
     font-size:11px; font-family: verdana, arial, helvetica, sans-serif; /* FIXME: remember to remove! */
@@ -102,4 +99,20 @@
 #openingHoursModalDiv table, #openingHoursTargetDiv table{
     border-collapse: separate;
     border-spacing: 2px;
+}
+/* Infobox styles */
+openingHoursInfobox{
+    margin: 0;
+    padding: 0;
+}
+.openingHoursContactDiv{
+    float: right;
+    margin: 0 10px;
+    padding-left: 10px;
+    border-left: 1px solid #ccc;
+}
+.clearRght{
+    margin:0;
+    padding:0;
+    clear:right;
 }

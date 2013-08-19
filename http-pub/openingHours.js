@@ -244,12 +244,11 @@ console.log('no jQuery or bootstrap in here!');
                         // set the headline
                         that.modalHeader.innerHTML = that.currentLib.name;
                         // set infobox
-                        if (that.currentLib.desc) {
-                            that.modalInfobox.innerHTML = that.currentLib.desc;
-                            that.modalInfobox.style.display = 'block';
-                        } else {
-                            that.modalInfobox.style.display = 'none';
-                        }
+                        that.modalInfobox.style.display = 'block';
+                        Array.prototype.forEach.call(that.modalInfobox.children, function (infobox) { // TODO: There is no logic in show/hiding the views and remove/append the infobox
+                            infobox.remove();
+                        });
+                        that.modalInfobox.appendChild(that.getInfobox(that.currentLib));
                         // prepare the map
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
@@ -501,6 +500,45 @@ console.log('transitionendHandler: modalDialogRemoved');
             return contentStr;
         },
 /*jshint scripturl:false*/
+
+        getInfobox : function (library) {
+            var that = this,
+                infoboxId = 'info:' + library.name;
+            if (that.viewCache[infoboxId]) {
+                // infobox already exists
+                return that.viewCache[infoboxId];
+            } else {
+                // infobox does not exist - go create one
+                var newDiv = document.createElement('div'),
+                    tmpElem;
+                newDiv.className = 'openingHoursInfobox';
+                if (library.contact.length) {
+                    tmpElem = document.createElement('div'),
+                    tmpElem.className = 'openingHoursContactDiv';
+                    tmpElem.innerHTML = library.contact;
+                    newDiv.appendChild(tmpElem);
+                }
+                if (library.url.length) {
+                    tmpElem = document.createElement('p'),
+                    tmpElem.className = 'openingHoursLinkP';
+                    tmpElem.innerHTML = '<a href="' + library.url + '" target="_blank">' + library.url + '</a>';
+                    newDiv.appendChild(tmpElem);
+                }
+                if (library.desc.length) {
+                    tmpElem = document.createElement('div');
+                    tmpElem.className = 'openingHoursDescDiv';
+                    tmpElem.innerHTML = library.desc;
+                    newDiv.appendChild(tmpElem);
+                }
+                if (library.contact.length > 0) {
+                    tmpElem = document.createElement('div');
+                    tmpElem.className = 'clearRght';
+                    newDiv.appendChild(tmpElem);
+                }
+                that.viewCache[infoboxId] = newDiv;
+                return that.getInfobox(library);
+            }
+        },
 
         // --- helper functions
         getLibrary : function (library) {
