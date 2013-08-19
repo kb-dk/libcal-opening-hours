@@ -89,7 +89,7 @@ var OpeningHours = (function (document) {
         nextRowIsOdd = !nextRowIsOdd;
         for (var i = 0; i < arguments.length; i += 1) {
             if ((typeof arguments[i] === 'string') || (arguments[i] instanceof String)) {
-                str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>';
+                str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>'; // All cells that are not the very first in the row gets timeField (nowrap + center style)
             } else { // TODO: If needed, this could be done more elegantly, shoveling all sorts of attributes in the html element.
                 if ((typeof arguments[i] === 'object') && (arguments[i] !== null)) {
                     str += '<td>';
