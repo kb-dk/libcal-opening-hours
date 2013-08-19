@@ -328,18 +328,22 @@ console.log('no jQuery or bootstrap in here!');
                 that.modalBody.appendChild(newDiv);
                 // When the modal is shown - if there is a map, resize it (so it will always fit), if it has been scrolled up (hide) display=none the modalDialog
                 // NOTE: If we take it of before the top transition ends, the transition fails (in chrome 28)
-                that.modalDialog.addEventListener('transitionend', function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
-                    if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
-                        if (that.modalDialogIsVisible) {
-                            if (that.currentTimespan === 'map') {
-                                google.maps.event.trigger(that.gmap, 'resize');
-                                that.gmap.setCenter(that.currentLib.latLng);
+                ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend', 'msTransitionEnd'].forEach(function (eventName) {
+                    that.modalDialog.addEventListener(eventName, function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
+                        if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
+                            if (that.modalDialogIsVisible) {
+console.log('transitionendHandler: modalDialog done - resizing map');
+                                if (that.currentTimespan === 'map') {
+                                    google.maps.event.trigger(that.gmap, 'resize');
+                                    that.gmap.setCenter(that.currentLib.latLng);
+                                }
+                            } else {
+console.log('transitionendHandler: modalDialogRemoved');
+                                that.modalDialog.style.display = 'none';
                             }
-                        } else {
-                              that.modalDialog.style.display = 'none';
+                            e.stopPropagation();
                         }
-                        e.stopPropagation();
-                    }
+                    });
                 });
                 that.viewCache['map'] = newDiv;
                 if (cb) {
