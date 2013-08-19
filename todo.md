@@ -1,8 +1,6 @@
 TODO
 ====
 * ensure that everything is loaded as dynamic as possible, and that the loader script is as tidy and human readable as possible
-* when the modal map infos get more complex (address, url and desc), it should be generated once and cached (maybe just in the viewCache?) exactly like the views.
-* the modal map view should contain some data about the library too, like library.description, library.contact and library.url (footnote and name in the modal head?)
 
 Known bugs
 ==========
