@@ -65,8 +65,24 @@ var OpeningHours = (function (document) {
         return weekdays[dayIndex || new Date().getDay()];
     }
 
+    function getTdTextContent(content) {
+        var str = content;        
+        if (typeof content === 'object' && content !== null) {
+            if (content.text) {
+                str = content.text;
+            }
+            if (content.href) {
+                str = '<a href="' + content.href + '"' + (content.target ? ' target="' + content.target + '"' : '') + '>' + str + '</a>';
+            }
+        }
+        return str;
+    }
+
     /**
      * Creates a table row - all but the very first row is set to class="timeField" (=centered no-wrap)
+     * Makes all params to cells in a table row, and returns the row (as a string)
+     * each parameter can be a string or an object. If string the string is the text inside the td
+     * if object, it expects it to be of the form: { text : 'textnodeString', href : 'url-to-where-the-text-should-link-on-click' }
      */
     function getTr() {
         var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
@@ -446,7 +462,10 @@ console.log('transitionendHandler: modalDialogRemoved');
                 switch (timespan) {
                 case 'day' :
                     // --- [ lib day ] ---
-                    contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
+                    contentStr += '<table>' + that.getThead({
+                        text : that.config.i18n.library,
+                        href : 'javascript: openingHours.setView({library: \'all\',timespan: \'' + timespan + '\' });'
+                    }, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
                     contentStr += getTr(library, that.timesToStr(libraryHours[today].times));
                     contentStr += '</tbody>';
@@ -543,13 +562,13 @@ console.log('transitionendHandler: modalDialogRemoved');
             var overruleLibCol = this.config.useLibraryColors && this.currentLib && this.currentLib.color.length ? ' style="background-color:' + this.currentLib.color + '"' : '',
                 str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
             if (arguments.length < 2) {
-                return str + '<th class="first last"' + overruleLibCol + '>' + (arguments[0] || '') + '</th></tr></thead>';
+                return str + '<th class="first last"' + overruleLibCol + '>' + (getTdTextContent(arguments[0]) || '') + '</th></tr></thead>';
             } else {
-                str += '<th class="first"' + overruleLibCol + '>' + arguments[0] + '</th>';
+                str += '<th class="first"' + overruleLibCol + '>' + getTdTextContent(arguments[0]) + '</th>';
                 for (var i = 1; i < arguments.length - 1; i += 1) {
-                    str += '<th' + overruleLibCol + '>' + arguments[i] + '</th>';
+                    str += '<th' + overruleLibCol + '>' + getTdTextContent(arguments[i]) + '</th>';
                 }
-                return str + '<th class="last"' + overruleLibCol + '>' + arguments[arguments.length-1] + '</th></tr></thead>';
+                return str + '<th class="last"' + overruleLibCol + '>' + getTdTextContent(arguments[arguments.length-1]) + '</th></tr></thead>';
             }
         },
 
