@@ -46,7 +46,9 @@
 #openingHoursModalDiv table th, #openingHoursTargetDiv table th{
     text-align: left;
     padding: 5px;
-    font-weight: normal;
+    font-weight: bold;
+    color: #fff;
+}
 }
 #openingHoursModalDiv table th.first, #openingHoursTargetDiv table th.first{
     -webkit-border-top-left-radius: 5px;
