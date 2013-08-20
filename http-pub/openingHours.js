@@ -37,15 +37,6 @@ var OpeningHours = (function (document) {
     newCssLinkElement.href = 'http://localhost:8002/openingHoursStyles.css';
     document.getElementsByTagName('head')[0].appendChild(newCssLinkElement);
 
-    if (typeof $ === 'function' && $('#openingHoursModalDiv') && $('#openingHoursModalDiv').modal) {
-        // bootstrap and jQuery (in some form) is present
-    } else {
-        // no bootstrap / jQuery
-        var modalDiv = document.getElementById('openingHoursModalDiv');
-        modalDiv.style.opacity = 0;
-        modalDiv.style.top = '-25%';
-    }
-
 // ===== [ private helper functions ] =====
     var ugedage = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'],
         weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -56,6 +47,22 @@ var OpeningHours = (function (document) {
     ugedage.forEach(function (ugedag, index) {
         weekdayToUgedagHash[weekdays[index]] = ugedag;
     });
+
+    function setAttribute(elem, attr, value) {
+        attr = document.createAttribute(attr);
+        attr.value = value;
+        elem.attributes.setNamedItem(attr);
+    }
+
+    function createNewDiv(config) {
+        var that = this,
+            newDiv = document.createElement('div');
+        Object.keys(config).forEach(function (attrib) {
+            setAttribute(newDiv, attrib, config[attrib]);
+        });
+
+        return newDiv;
+    }
 
     /**
      * Transforms a Date.getDay() number into an english dayname
@@ -112,10 +119,10 @@ var OpeningHours = (function (document) {
     NotInitializedError.prototype = Error.prototype;
 
 // ===== [ OpeningHours Object ] =====
-    var OpeningHours = function (data) {
+    var OpeningHours = function (data, targetElement, modalDialog) {
         this.openingHours = data;
-        this.targetElement = document.getElementById('openingHoursTargetDiv');
-        this.modalDialog = document.getElementById('openingHoursModalDiv');
+        this.targetElement = targetElement;
+        this.modalDialog = modalDialog;
         this.viewCache = {};
     };
 
@@ -155,6 +162,7 @@ var OpeningHours = (function (document) {
             }
             var that = this;
             Array.prototype.forEach.call(that.targetElement.childNodes, function (view) {
+if (!view.style) { console.log('openingHours: View has no style? ', view); }
                 view.style.display = 'none';
             });
         },
@@ -622,11 +630,32 @@ var OpeningHours = (function (document) {
 
     };
 
+// ===== [ preparing DOM ] =====
+    // create the two divs needed for the openingHours GUI (table and modalDialog)
+    var thisScript = document.getElementById('openingHoursScript'),
+        targetElement = createNewDiv({
+            'id' : 'openingHoursTargetDiv'
+        }),
+        modalDialog = createNewDiv({
+            'id' : 'openingHoursModalDiv',
+            'class' : 'modal hide fade',
+            'tabindex' : '-1',
+            'role' : 'dialog',
+            'aria-labelledby' : 'openingHoursModalLabel',
+            'aria-hidden' : true
+        });
+    // hide modalDialog by hand in case bootstrap is not around
+    modalDialog.style.opacity = 0;
+    modalDialog.style.top = '-25%';
+    // inject them just before the script
+    thisScript.parentElement.insertBefore(targetElement, thisScript);
+    thisScript.parentElement.insertBefore(modalDialog, thisScript);
+
     // this is needed for google.maps to be loaded correctly asynchronously
     OpeningHours.initializeGMaps = function () {};
 
     OpeningHours.loadOpeningHours = function (data) {
-        window.openingHours = new OpeningHours(data);
+        window.openingHours = new OpeningHours(data, targetElement, modalDialog);
         window.openingHours.openingHours.hasNoLatLngCoordsYet = true; // flag to first time renderView renders a map
         window.openingHours.init(OpeningHours.config);
     };
