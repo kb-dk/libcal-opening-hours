@@ -175,7 +175,6 @@ var OpeningHours = (function (document) {
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('show');
             } else {
-console.log('no jQuery and/or bootstrap in here!');
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.display = 'block';
                 window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
@@ -201,7 +200,6 @@ console.log('no jQuery and/or bootstrap in here!');
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('hide');
             } else {
-console.log('no jQuery or bootstrap in here!');
                 modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
@@ -252,7 +250,7 @@ console.log('no jQuery or bootstrap in here!');
                         // prepare the map
                         that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
                         that.gmap.setZoom(15);
-                        that.gmap.setCenter(that.currentLib.latLng); // FIXME: On the very first rendering this is centering in 0,0 on the map??
+                        that.gmap.setCenter(that.currentLib.latLng); // NOTE: On the very first rendering this center is placed in 0,0 - but it does not matter since the map is resized/centered
                         that.gmapMarker.setPosition(that.currentLib.latLng);
                         that.gmapMarker.setAnimation(google.maps.Animation.DROP);
                     } else {
@@ -347,13 +345,11 @@ console.log('no jQuery or bootstrap in here!');
                     that.modalDialog.addEventListener(eventName, function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
                         if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
                             if (that.modalDialogIsVisible) {
-console.log('transitionendHandler: modalDialog done - resizing map');
                                 if (that.currentTimespan === 'map') {
                                     google.maps.event.trigger(that.gmap, 'resize');
                                     that.gmap.setCenter(that.currentLib.latLng);
                                 }
                             } else {
-console.log('transitionendHandler: modalDialogRemoved');
                                 that.modalDialog.style.display = 'none';
                             }
                             e.stopPropagation();
