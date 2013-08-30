@@ -598,8 +598,14 @@ if (!view.style) { console.log('openingHours: View has no style? ', view); }
          * Also adds class first and last to the first and last header
          */
         getThead : function () {
-            var overruleLibCol = this.config.useLibraryColors && this.currentLib && this.currentLib.color.length ? ' style="background-color:' + this.currentLib.color + '"' : '',
-                str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
+            var overruleLibCol = ''; // as default use standard colorScheme
+            if (this.config.allLibraryColor && this.config.allLibraryColor.length) { // NOTE: if there is a allLibraryColor defined use that instead of stdColors
+                overruleLibCol = ' style="background-color:' + this.config.allLibraryColor + '"';
+            }
+            if (this.config.useLibraryColors && this.currentLib && this.currentLib.color.length) { // NOTE: if this is a library and it has its own color use that
+                overruleLibCol = ' style="background-color:' + this.currentLib.color + '"';
+            }
+            var str = '<thead><tr class="' + (this.config.colorScheme || 'standard') + '">';
             if (arguments.length < 2) {
                 return str + '<th class="first last"' + overruleLibCol + '>' + (getTdTextContent(arguments[0]) || '') + '</th></tr></thead>';
             } else {
