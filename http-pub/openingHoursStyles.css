@@ -76,12 +76,6 @@
 #openingHoursTargetDiv .floatright{
     float: right;
 }
-#openingHoursModalDiv table tr.odd td, #openingHoursTargetDiv table tr.odd td{
-    background-color: #cccccc;
-}
-#openingHoursModalDiv table tr.even td, #openingHoursTargetDiv table tr.even td{
-    background-color: #eaeaea;
-}
 #openingHoursModalDiv table tr.standard th, #openingHoursTargetDiv table tr.standard th{
     background-color: rgb(175, 3, 3); /* the red color from the mockup */
 }

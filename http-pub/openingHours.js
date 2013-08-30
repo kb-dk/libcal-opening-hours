@@ -41,7 +41,6 @@ var OpeningHours = (function (document) {
     var ugedage = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'],
         weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         weekdayToUgedagHash = [],
-        nextRowIsOdd = true, // used to keep track of odd/even rows - not that sexy, but it works for now
         libraryIndex = []; // index in locations for the different libraries
 
     ugedage.forEach(function (ugedag, index) {
@@ -92,8 +91,7 @@ var OpeningHours = (function (document) {
      * if object, it expects it to be of the form: { text : 'textnodeString', href : 'url-to-where-the-text-should-link-on-click' }
      */
     function getTr() {
-        var str = '<tr class="' + (nextRowIsOdd? 'odd' : 'even') + '">';
-        nextRowIsOdd = !nextRowIsOdd;
+        var str = '<tr>';
         for (var i = 0; i < arguments.length; i += 1) {
             if ((typeof arguments[i] === 'string') || (arguments[i] instanceof String)) {
                 str += '<td' + (i > 0 ? ' class="timeField"' : '') + '>' + arguments[i] + '</td>'; // All cells that are not the very first in the row gets timeField (nowrap + center style)
@@ -402,7 +400,6 @@ if (!view.style) { console.log('openingHours: View has no style? ', view); }
                 today;
             // build the view for library_timespan
             contentStr = '';
-            nextRowIsOdd = true;
             if (!(timespan==='week' || timespan === 'day' || timespan === 'map')) {
                 throw new ReferenceError('Requested timespan "' + timespan + '" is illegal. Try "day" or "week".', 'openingHours');
             }
@@ -620,7 +617,7 @@ if (!view.style) { console.log('openingHours: View has no style? ', view); }
          * Also adds class first and last to the first and last header
          */
         getTfoot : function (rightLink, leftLink) {
-            var str = '<tfoot><tr class="' + (nextRowIsOdd ? 'odd' : 'even') + '"><td colspan="2">';
+            var str = '<tfoot><tr><td colspan="2">';
             str += '<div class="floatright"><a href="' + rightLink.href + '">' + rightLink.text + '</a></div>';
             if (leftLink) {
                 str += '<div class="floatleft"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
