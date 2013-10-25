@@ -183,7 +183,7 @@ var OpeningHours = (function (document) {
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('show');
             } else {
-                modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
+                modalDiv = modalDiv.nodeType === 1 ? modalDiv : modalDiv[0];
                 modalDiv.style.display = 'block';
                 window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
                     modalDiv.style.opacity = 1;
@@ -208,7 +208,7 @@ var OpeningHours = (function (document) {
             if (modalDiv && modalDiv.modal) {
                 modalDiv.modal('hide');
             } else {
-                modalDiv = modalDiv instanceof HTMLElement ? modalDiv : modalDiv[0];
+                modalDiv = modalDiv.nodeType === 1 ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
                 that.overlay.style.display = 'none';
