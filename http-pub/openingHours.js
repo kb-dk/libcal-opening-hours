@@ -24,7 +24,6 @@ function loadAdditionalJavascript(url, callback) { // TODO: We might wanna shove
             }
             // avoid IE memoryleak http://mng.bz/W8fx
             script.onload = null;
-            script.readyState = null;
         }
     };
 }
