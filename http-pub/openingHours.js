@@ -192,9 +192,15 @@ var OpeningHours = (function (document) {
                 if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
                     that.overlay = document.createElement('div');
                     that.overlay.className = 'openingHoursOverlay';
-                    modalDiv.getElementsByClassName('close')[0].addEventListener('click', function () { // also attach an eventhandler for the close button
-                        that.hideModal.call(that);
-                    });
+                    if (!window.addEventListener) { // IE8+9
+                        modalDiv.querySelectorAll('.close')[0].attachEvent('onclick', function () {
+                            that.hideModal.call(that);
+                        });
+                    } else { // every other browser in the world *sigh
+                        modalDiv.getElementsByClassName('close')[0].addEventListener('click', function () { // also attach an eventhandler for the close button
+                            that.hideModal.call(that);
+                        });
+                    }
                     document.body.appendChild(this.overlay);
                 } 
                 that.overlay.style.display = 'block';
@@ -212,6 +218,9 @@ var OpeningHours = (function (document) {
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
                 that.overlay.style.display = 'none';
+                if (!window.addEventListener) {
+                    modalDiv.style.display = 'none';
+                }
             }
             that.modalDialogIsVisible = false;
         },
@@ -347,23 +356,25 @@ var OpeningHours = (function (document) {
                     map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
-                // When the modal is shown - if there is a map, resize it (so it will always fit), if it has been scrolled up (hide) display=none the modalDialog
-                // NOTE: If we take it of before the top transition ends, the transition fails (in chrome 28)
-                ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend', 'msTransitionEnd'].forEach(function (eventName) {
-                    that.modalDialog.addEventListener(eventName, function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
-                        if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
-                            if (that.modalDialogIsVisible) {
-                                if (that.currentTimespan === 'map') {
-                                    google.maps.event.trigger(that.gmap, 'resize');
-                                    that.gmap.setCenter(that.currentLib.latLng);
+                if (window.addEventListener) { // NOTE: If IE8+9 do nothing - they don't support transitions anyway
+                    // When the modal is shown - if there is a map, resize it (so it will always fit), if it has been scrolled up (hide) display=none the modalDialog
+                    // NOTE: If we take it of before the top transition ends, the transition fails (in chrome 28)
+                    ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend', 'msTransitionEnd'].forEach(function (eventName) {
+                        that.modalDialog.addEventListener(eventName, function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
+                            if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
+                                if (that.modalDialogIsVisible) {
+                                    if (that.currentTimespan === 'map') {
+                                        google.maps.event.trigger(that.gmap, 'resize');
+                                        that.gmap.setCenter(that.currentLib.latLng);
+                                    }
+                                } else {
+                                    that.modalDialog.style.display = 'none';
                                 }
-                            } else {
-                                that.modalDialog.style.display = 'none';
+                                e.stopPropagation();
                             }
-                            e.stopPropagation();
-                        }
+                        });
                     });
-                });
+                }
                 that.viewCache['map'] = newDiv;
                 if (cb) {
                     cb();
