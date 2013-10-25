@@ -515,13 +515,13 @@ var OpeningHours = (function (document) {
                     tmpElem;
                 newDiv.className = 'openingHoursInfobox';
                 if (library.contact.length) {
-                    tmpElem = document.createElement('div'),
+                    tmpElem = document.createElement('div');
                     tmpElem.className = 'openingHoursContactDiv';
                     tmpElem.innerHTML = library.contact;
                     newDiv.appendChild(tmpElem);
                 }
                 if (library.url.length) {
-                    tmpElem = document.createElement('p'),
+                    tmpElem = document.createElement('p');
                     tmpElem.className = 'openingHoursLinkP';
                     tmpElem.innerHTML = '<a href="' + library.url + '" target="_blank">' + library.url + '</a>';
                     newDiv.appendChild(tmpElem);
