@@ -54,8 +54,7 @@ var OpeningHours = (function (document) {
     }
 
     function createNewDiv(config) {
-        var that = this,
-            newDiv = document.createElement('div');
+        var newDiv = document.createElement('div');
         Object.keys(config).forEach(function (attrib) {
             setAttribute(newDiv, attrib, config[attrib]);
         });
@@ -160,7 +159,9 @@ var OpeningHours = (function (document) {
             }
             var that = this;
             Array.prototype.forEach.call(that.targetElement.childNodes, function (view) {
-if (!view.style) { console.log('openingHours: View has no style? ', view); }
+                if (!view.style) {
+                    console.log('openingHours: View has no style? ', view);
+                }
                 view.style.display = 'none';
             });
         },
