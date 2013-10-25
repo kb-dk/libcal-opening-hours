@@ -270,7 +270,7 @@ var OpeningHours = (function (document) {
                     that.showModal();
                 } else {
                     // view has to be rendered
-                    try{
+                    try {
                         that.renderView(
                             config.library,
                             config.timespan,
@@ -324,7 +324,7 @@ var OpeningHours = (function (document) {
             if (timespan === 'map') {
                 if (that.openingHours.hasNoLatLngCoordsYet) { // first time a map is rendered, all library coordinates are translated to google.maps.LatLng
                     // generating google.maps.LatLng positions for all libraries with lat:long attributes
-                    this.openingHours.locations.forEach(function (location) {
+                    that.openingHours.locations.forEach(function (location) {
                         if (location.lat.length && location.long.length) {
                             location.latLng = new google.maps.LatLng(location.lat, location.long);
                         }
