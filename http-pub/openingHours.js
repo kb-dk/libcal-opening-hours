@@ -252,7 +252,7 @@ var OpeningHours = (function (document) {
                         // set infobox
                         that.modalInfobox.style.display = 'block';
                         Array.prototype.forEach.call(that.modalInfobox.children, function (infobox) { // TODO: There is no logic in show/hiding the views and remove/append the infobox
-                            infobox.remove();
+                            that.modalInfobox.removeChild(infobox);
                         });
                         that.modalInfobox.appendChild(that.getInfobox(that.currentLib));
                         // prepare the map
