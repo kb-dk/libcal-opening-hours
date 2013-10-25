@@ -55,9 +55,11 @@ var OpeningHours = (function (document) {
 
     function createNewDiv(config) {
         var newDiv = document.createElement('div');
-        Object.keys(config).forEach(function (attrib) {
-            setAttribute(newDiv, attrib, config[attrib]);
-        });
+        for (var i in config) {
+            if (config.hasOwnProperty(i)) {
+                setAttribute(newDiv, i, config[i]);
+            }
+        }
 
         return newDiv;
     }
