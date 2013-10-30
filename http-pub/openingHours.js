@@ -10,6 +10,9 @@ if (!Array.prototype.forEach) {
     }; 
 }
 
+// get the browser specific transitionEnd event name (https://gist.github.com/O-Zone/7230245)
+(function(c){var d={MozTransition:"transitionend",WebkitTransition:"webkitTransitionEnd",transition:"transitionEnd",MSTransition:"msTransitionEnd",OTransition:"oTransitionEnd"},b=c.document.createElement("div");for(var a in d){if(b.style[a]!==undefined){c.transitionEnd=d[a];break}}})(window);
+
 function loadAdditionalJavascript(url, callback) { // TODO: We might wanna shovel this into window.OpeningHours to avoid cluttering windows?
     var script = document.createElement('script');
     script.async = true;
