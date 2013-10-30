@@ -24,6 +24,7 @@
     background-color: #000;
     opacity: .8;
     transition: opacity .15s linear;
+    filter:alpha(opacity=80); /* IE8 */
 }
 #openingHoursModalDiv .close{
     color: #000;
