@@ -180,6 +180,47 @@ var OpeningHours = (function (document) {
             });
         },
 
+        animStep : function (config) {
+            if (!config.stepLeft) {
+                config.cb.call(config.that);
+            } else {
+                config.that.modalDialog.style.top = config.top.shift();
+                var opac = config.opacity.shift();
+                config.that.modalDialog.style.opacity = opac;
+                config.that.modalDialog.style.filter = 'alpha(opacity=' + 100 * opac + ')'; // lex IE8 
+                config.stepLeft -= 1;
+                setTimeout(function () {
+                    config.that.animStep(config);
+                }, config.stepTime);
+            }
+        },
+
+        // Method for animating the modal dialog in browsers that do not support CSS3 transitions (IE8 + IE9)
+        animateModal : function (show, cb) {
+            var that = this;
+            if (show) {
+                //show modalDialog
+                that.animStep({
+                    that : that,
+                    stepLeft : 10,
+                    stepTime : 20,
+                    top : ['-25%','-24%','-23%','-20%','-17%','-13%','-8%','-2%','4%','10%'],
+                    opacity : ['.1','.2','.3','.4','.5','.6','.7','.8','.9','1'],
+                    cb : cb ? function () { cb.call(that); } : function () {}
+                });
+            } else {
+                // hide modalDialog
+                that.animStep({
+                    that : that,
+                    stepLeft : 10,
+                    stepTime : 20,
+                    top : ['10%','4%','-2%','-8%','-13%','-17%','-20%','-23%','-24%','-25%'],
+                    opacity : ['.9','.8','.7','.6','.5','.4','.3','.2','.1','0'],
+                    cb : cb ? function () { cb.call(that); } : function () {}
+                });
+            }
+        },
+
         showModal : function () {
             var that = this,
                 modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
@@ -187,11 +228,6 @@ var OpeningHours = (function (document) {
                 modalDiv.modal('show');
             } else {
                 modalDiv = modalDiv.nodeType === 1 ? modalDiv : modalDiv[0];
-                modalDiv.style.display = 'block';
-                window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
-                    modalDiv.style.opacity = 1;
-                    modalDiv.style.top = '10%';
-                }, 50);
                 if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
                     that.overlay = document.createElement('div');
                     that.overlay.className = 'openingHoursOverlay';
@@ -206,6 +242,20 @@ var OpeningHours = (function (document) {
                     }
                     document.body.appendChild(this.overlay);
                 } 
+                modalDiv.style.display = 'block';
+                window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
+                    if (window.transitionEnd) {
+                        modalDiv.style.opacity = 1;
+                        modalDiv.style.top = '10%';
+                    } else {
+                        that.animateModal(true, function () {
+                            if (that.currentLib) { // NOTE: Only resize map if it IS a map - if there is no currentLib, it is the all libs all week modal!
+                                google.maps.event.trigger(that.gmap, 'resize');
+                                that.gmap.setCenter(that.currentLib.latLng);
+                            }
+                        });
+                    }
+                }, 50);
                 that.overlay.style.display = 'block';
             }
             that.modalDialogIsVisible = true;
@@ -221,8 +271,10 @@ var OpeningHours = (function (document) {
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
                 that.overlay.style.display = 'none';
-                if (!window.addEventListener) {
-                    modalDiv.style.display = 'none';
+                if (!window.transitionEnd) { 
+                    that.animateModal(false, function () {
+                        modalDiv.style.display = 'none';
+                    });
                 }
             }
             that.modalDialogIsVisible = false;
@@ -359,11 +411,10 @@ var OpeningHours = (function (document) {
                     map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
-                if (window.addEventListener) { // NOTE: If IE8+9 do nothing - they don't support transitions anyway
-                    // When the modal is shown - if there is a map, resize it (so it will always fit), if it has been scrolled up (hide) display=none the modalDialog
-                    // NOTE: If we take it of before the top transition ends, the transition fails (in chrome 28)
-                    ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend', 'msTransitionEnd'].forEach(function (eventName) {
-                        that.modalDialog.addEventListener(eventName, function (e) { // FIXME: What if the transitionend event is never fired? (word is that it can happen?)
+                if (window.transitionEnd && window.addEventListener) { // TODO: If browsers have transitionEnd, but not addEventListener, they will not close their modalDialog (but I don't know any browsers like that?) 
+                    ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend'].forEach(function (eventName) { // NOTE: it ought to be enough with an eventlistener for window.transitionEnd, but it seems that it misses out on IE10, so I have just kept the bulk listening.
+                        //that.modalDialog.addEventListener(window.transitionEnd, function (e) {
+                        that.modalDialog.addEventListener(eventName, function (e) {
                             if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
                                 if (that.modalDialogIsVisible) {
                                     if (that.currentTimespan === 'map') {
