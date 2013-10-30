@@ -192,7 +192,7 @@ var OpeningHours = (function (document) {
                 if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
                     that.overlay = document.createElement('div');
                     that.overlay.className = 'openingHoursOverlay';
-                    if (!window.addEventListener) { // IE8+9
+                    if (!document.getElementsByClassName) { // IE8
                         modalDiv.querySelectorAll('.close')[0].attachEvent('onclick', function () {
                             that.hideModal.call(that);
                         });
