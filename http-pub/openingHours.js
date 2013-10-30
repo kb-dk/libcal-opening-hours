@@ -197,7 +197,7 @@ var OpeningHours = (function (document) {
                             that.hideModal.call(that);
                         });
                     } else { // every other browser in the world *sigh
-                        modalDiv.getElementsByClassName('close')[0].addEventListener('click', function () { // also attach an eventhandler for the close button
+                        modalDiv.getElementsByClassName('close')[0].addEventListener('click', function () { // attach an eventhandler for the close button
                             that.hideModal.call(that);
                         });
                     }
