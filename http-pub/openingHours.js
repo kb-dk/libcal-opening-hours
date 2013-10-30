@@ -181,7 +181,7 @@ var OpeningHours = (function (document) {
         },
 
         animStep : function (config) {
-            if (!config.stepLeft) {
+            if (!config.stepLeft && config.cb) {
                 config.cb.call(config.that);
             } else {
                 config.that.modalDialog.style.top = config.top.shift();
@@ -206,7 +206,7 @@ var OpeningHours = (function (document) {
                     stepTime : 40,
                     top : ['-25%','-23%','-18%','-11%','1%','10%'],
                     opacity : ['0','.2','.4','.6','.8','1'],
-                    cb : cb ? function () { cb.call(that); } : function () {}
+                    cb : cb
                 });
             } else {
                 // hide modalDialog
@@ -216,7 +216,7 @@ var OpeningHours = (function (document) {
                     stepTime : 40,
                     top : ['10%','1%','-11%','-18%','-23%','-25%'],
                     opacity : ['1','.8','.6','.4','.2','0'],
-                    cb : cb ? function () { cb.call(that); } : function () {}
+                    cb : cb
                 });
             }
         },
