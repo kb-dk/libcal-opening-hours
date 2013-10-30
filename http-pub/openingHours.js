@@ -202,20 +202,20 @@ var OpeningHours = (function (document) {
                 //show modalDialog
                 that.animStep({
                     that : that,
-                    stepLeft : 10,
-                    stepTime : 20,
-                    top : ['-25%','-24%','-23%','-20%','-17%','-13%','-8%','-2%','4%','10%'],
-                    opacity : ['.1','.2','.3','.4','.5','.6','.7','.8','.9','1'],
+                    stepLeft : 6,
+                    stepTime : 40,
+                    top : ['-25%','-23%','-18%','-11%','1%','10%'],
+                    opacity : ['0','.2','.4','.6','.8','1'],
                     cb : cb ? function () { cb.call(that); } : function () {}
                 });
             } else {
                 // hide modalDialog
                 that.animStep({
                     that : that,
-                    stepLeft : 10,
-                    stepTime : 20,
-                    top : ['10%','4%','-2%','-8%','-13%','-17%','-20%','-23%','-24%','-25%'],
-                    opacity : ['.9','.8','.7','.6','.5','.4','.3','.2','.1','0'],
+                    stepLeft : 6,
+                    stepTime : 40,
+                    top : ['10%','1%','-11%','-18%','-23%','-25%'],
+                    opacity : ['1','.8','.6','.4','.2','0'],
                     cb : cb ? function () { cb.call(that); } : function () {}
                 });
             }
