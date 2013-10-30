@@ -3,7 +3,7 @@
     left: 50%;
     width: 560px;
     margin-left: -280px;
-    z-index: 1050;
+    z-index: 9050;
     border-radius: 6px;
     background-color: #fff;
     border:1px solid rgba(0,0,0,.3);
@@ -16,7 +16,7 @@
 }
 .openingHoursOverlay{
     position: fixed;
-    z-index: 1000;
+    z-index: 9000;
     width: 100%;
     height: 100%;
     top: 0;
@@ -25,6 +25,10 @@
     opacity: .8;
     transition: opacity .15s linear;
     filter:alpha(opacity=80); /* IE8 */
+}
+#openingHoursTargetDiv .clearnone{
+    clear: none;
+    margin-bottom: 0;
 }
 #openingHoursModalDiv .close{
     color: #000;

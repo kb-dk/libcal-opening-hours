@@ -691,9 +691,9 @@ var OpeningHours = (function (document) {
          */
         getTfoot : function (rightLink, leftLink) {
             var str = '<tfoot><tr><td colspan="2">';
-            str += '<div class="floatright"><a href="' + rightLink.href + '">' + rightLink.text + '</a></div>';
+            str += '<div class="floatright clearnone"><a href="' + rightLink.href + '">' + rightLink.text + '</a></div>';
             if (leftLink) {
-                str += '<div class="floatleft"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
+                str += '<div class="floatleft clearnone"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
             }
             return str + '</td></tr></tfoot>';
         },
