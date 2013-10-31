@@ -702,7 +702,7 @@ var OpeningHours = (function (document) {
 
 // ===== [ preparing DOM ] =====
     // create the two divs needed for the openingHours GUI (table and modalDialog)
-    var thisScript = document.getElementById('openingHoursScript'),
+    var openingHoursContainer = document.getElementById('openingHoursContainer'),
         targetElement = createNewDiv({
             'id' : 'openingHoursTargetDiv'
         }),
@@ -717,9 +717,9 @@ var OpeningHours = (function (document) {
     // hide modalDialog by hand in case bootstrap is not around
     modalDialog.style.opacity = 0;
     modalDialog.style.top = '-25%';
-    // inject them just before the script
-    thisScript.parentElement.insertBefore(targetElement, thisScript);
-    thisScript.parentElement.insertBefore(modalDialog, thisScript);
+    // inject them just before the scripts
+    openingHoursContainer.insertBefore(modalDialog, openingHoursContainer.firstChild);
+    openingHoursContainer.insertBefore(targetElement, openingHoursContainer.firstChild);
 
     // this is needed for google.maps to be loaded correctly asynchronously
     OpeningHours.initializeGMaps = function () {};
