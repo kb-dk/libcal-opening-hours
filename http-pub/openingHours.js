@@ -232,7 +232,8 @@ var OpeningHours = (function (document) {
                     that.overlay = document.createElement('div');
                     that.overlay.className = 'openingHoursOverlay';
                     if (!document.getElementsByClassName) { // IE8
-                        modalDiv.querySelectorAll('.close')[0].attachEvent('onclick', function () {
+                        var closeButton = modalDiv.querySelector ? modalDiv.querySelectorAll('.close')[0] : modalDiv.firstChild; // if DocMode IE7 or quirksmode, fallback to asserting that the closeButton is the firstChild :(
+                        closeButton.attachEvent('onclick', function () {
                             that.hideModal.call(that);
                         });
                     } else { // every other browser in the world *sigh
