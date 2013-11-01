@@ -545,7 +545,7 @@ var OpeningHours = (function (document) {
                             text : that.config.i18n.allWeek,
                             href : 'javascript:openingHours.setView({timespan:\'week\'});'
                         }, (that.currentLib.lat && that.currentLib.long ? {
-                            text : that.config.i18n.map,
+                            text : that.config.i18n.info,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
                         } : undefined)
                     );
