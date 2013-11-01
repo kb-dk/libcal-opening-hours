@@ -134,19 +134,40 @@ var OpeningHours = (function (document) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
             }
+            var that = this;
             this.config = config || {
                 library: 'all',
                 timespan: 'day',
                 colorScheme: 'standard'
             };
-            for (var i=0; i < this.openingHours.locations.length; i += 1) {
-                libraryIndex[this.openingHours.locations[i].name] = i;
+            for (var i=0; i < that.openingHours.locations.length; i += 1) {
+                libraryIndex[that.openingHours.locations[i].name] = i;
             }
             //inject modal dialog DOM
-            this.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div id="openingHoursModalInfobox"></div><div class="modal-body"></div>';
-            this.modalHeader = document.getElementById('openingHoursModalLabel');
-            this.modalInfobox = document.getElementById('openingHoursModalInfobox');
-            this.modalBody = this.modalDialog.lastChild;
+            that.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div id="openingHoursModalInfobox"></div><div class="modal-body"></div>';
+            that.modalHeader = document.getElementById('openingHoursModalLabel');
+            that.modalInfobox = document.getElementById('openingHoursModalInfobox');
+            that.modalBody = that.modalDialog.lastChild;
+            // Set up transitionEnd event handler that turns off the modal dialog after ended fade up transition in browsers that supports transitions
+            if (window.transitionEnd && window.addEventListener) { // TODO: If browsers have transitionEnd, but not addEventListener, they will not close their modalDialog (but I don't know any browsers like that?) 
+                ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend'].forEach(function (eventName) { // NOTE: it ought to be enough with an eventlistener for whatever is in window.transitionEnd, but it seems that it misses out on IE10, so I have just kept the bulk listening.
+                    //that.modalDialog.addEventListener(window.transitionEnd, function (e) {
+                    that.modalDialog.addEventListener(eventName, function (e) {
+                        if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
+                            if (that.modalDialogIsVisible) {
+                                if (that.currentTimespan === 'map') {
+                                    google.maps.event.trigger(that.gmap, 'resize');
+                                    that.gmap.setCenter(that.currentLib.latLng);
+                                }
+                            } else {
+                                that.modalDialog.style.display = 'none';
+                            }
+                            e.stopPropagation();
+                        }
+                    });
+                });
+            }
+
             // initialize the view requested in the snippet
             this.setView({
                 library : this.config.library,
@@ -412,24 +433,6 @@ var OpeningHours = (function (document) {
                     map : that.gmap
                 });
                 that.modalBody.appendChild(newDiv);
-                if (window.transitionEnd && window.addEventListener) { // TODO: If browsers have transitionEnd, but not addEventListener, they will not close their modalDialog (but I don't know any browsers like that?) 
-                    ['webkitTransitionEnd','oTransitionEnd', 'otransitionend', 'transitionend'].forEach(function (eventName) { // NOTE: it ought to be enough with an eventlistener for window.transitionEnd, but it seems that it misses out on IE10, so I have just kept the bulk listening.
-                        //that.modalDialog.addEventListener(window.transitionEnd, function (e) {
-                        that.modalDialog.addEventListener(eventName, function (e) {
-                            if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
-                                if (that.modalDialogIsVisible) {
-                                    if (that.currentTimespan === 'map') {
-                                        google.maps.event.trigger(that.gmap, 'resize');
-                                        that.gmap.setCenter(that.currentLib.latLng);
-                                    }
-                                } else {
-                                    that.modalDialog.style.display = 'none';
-                                }
-                                e.stopPropagation();
-                            }
-                        });
-                    });
-                }
                 that.viewCache['map'] = newDiv;
                 if (cb) {
                     cb();
