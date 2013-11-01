@@ -697,7 +697,7 @@ var OpeningHours = (function (document) {
                 str += '<div class="floatleft clearnone"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
             }
             return str + '</td></tr></tfoot>';
-        },
+        }
 
     };
 
