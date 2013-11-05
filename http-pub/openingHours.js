@@ -615,11 +615,12 @@ var OpeningHours = (function (document) {
                     newDiv.appendChild(tmpElem);
                 }
                 if (document.querySelector && !document.getElementsByClassName) { // XXX IE8
-                    var mapLink = document.createElement('a');
-                    //mapLink.href = 'https://www.google.com/maps/preview#!q=' + window.escape(that.currentLib.name) + '%40' + that.currentLib.lat + '+' + that.currentLib.long;
-                    mapLink.href = 'https://www.google.com/maps/preview#!q=' + that.currentLib.lat + '+' + that.currentLib.long;
+                    var mapLink = document.createElement('a'),
+                        mapImage = document.createElement('img');
+                    mapLink.href='https://maps.google.com/maps?q=' + that.currentLib.lat + ',' + that.currentLib.long + '&t=m&z=14';
+                    mapImage.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + that.currentLib.lat + ',' + that.currentLib.long + '&zoom=14&size=560x300&maptype=roadmap&markers=color:red%7C' + that.currentLib.lat + ',' + that.currentLib.long + '&sensor=false'; // FIXME: Hardcoded map size values (IE8 only)!
                     mapLink.target = '_blank';
-                    mapLink.appendChild(document.createTextNode(that.config.i18n.map));
+                    mapLink.appendChild(mapImage);
                     newDiv.appendChild(mapLink);
                 }
                 that.viewCache[infoboxId] = newDiv;
