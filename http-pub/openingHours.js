@@ -341,12 +341,14 @@ var OpeningHours = (function (document) {
                             that.modalInfobox.removeChild(infobox);
                         });
                         that.modalInfobox.appendChild(that.getInfobox(that.currentLib));
-                        // prepare the map
-                        that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-                        that.gmap.setZoom(15);
-                        that.gmap.setCenter(that.currentLib.latLng); // NOTE: On the very first rendering this center is placed in 0,0 - but it does not matter since the map is resized/centered
-                        that.gmapMarker.setPosition(that.currentLib.latLng);
-                        that.gmapMarker.setAnimation(google.maps.Animation.DROP);
+                        if (that.gmap) {
+                            // prepare the map
+                            that.gmap.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+                            that.gmap.setZoom(15);
+                            that.gmap.setCenter(that.currentLib.latLng); // NOTE: On the very first rendering this center is placed in 0,0 - but it doesnt matter since the map is resized/centered
+                            that.gmapMarker.setPosition(that.currentLib.latLng);
+                            that.gmapMarker.setAnimation(google.maps.Animation.DROP);
+                        }
                     } else {
                         // set the headline
                         that.modalHeader.innerHTML = that.config.i18n.openHour;
