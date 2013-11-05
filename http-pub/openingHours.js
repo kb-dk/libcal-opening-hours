@@ -562,7 +562,7 @@ var OpeningHours = (function (document) {
                             text : that.config.i18n.allLibraries,
                             href : 'javascript:openingHours.setView({library:\'all\', timespan: \'day\'});'
                         }, (that.currentLib.lat && that.currentLib.long ? {
-                            text : that.config.i18n.map,
+                            text : that.config.i18n.info,
                             href : 'javascript:openingHours.setView({timespan:\'map\'});'
                         } : undefined)
                     );
