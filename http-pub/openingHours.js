@@ -614,6 +614,14 @@ var OpeningHours = (function (document) {
                     tmpElem.className = 'clearRght';
                     newDiv.appendChild(tmpElem);
                 }
+                if (document.querySelector && !document.getElementsByClassName) { // XXX IE8
+                    var mapLink = document.createElement('a');
+                    //mapLink.href = 'https://www.google.com/maps/preview#!q=' + window.escape(that.currentLib.name) + '%40' + that.currentLib.lat + '+' + that.currentLib.long;
+                    mapLink.href = 'https://www.google.com/maps/preview#!q=' + that.currentLib.lat + '+' + that.currentLib.long;
+                    mapLink.target = '_blank';
+                    mapLink.appendChild(document.createTextNode(that.config.i18n.map));
+                    newDiv.appendChild(mapLink);
+                }
                 that.viewCache[infoboxId] = newDiv;
                 return that.getInfobox(library);
             }
