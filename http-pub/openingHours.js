@@ -420,22 +420,27 @@ var OpeningHours = (function (document) {
                     delete that.openingHours.hasNoLatLngCoordsYet;
                 }
                 newDiv = document.createElement('div');
-                newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
-                var mapOptions =  {
-                        center: that.currentLib.latLng,
-                        zoom: 8,
-                        streetViewControl: false,
-                        mapTypeId: google.maps.MapTypeId.ROADMAP
-                    },
-                    map = new google.maps.Map(newDiv, mapOptions);
-                that.gmap = map;
-                that.gmapMarker = new google.maps.Marker({
-                    position : that.currentLib.latLng,
-                    animation : google.maps.Animation.DROP,
-                    map : that.gmap
-                });
-                that.modalBody.appendChild(newDiv);
-                that.viewCache['map'] = newDiv;
+                if (!document.querySelector || document.getElementsByClassName) { // XXX !IE8
+                    // render map
+                    newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
+                    var mapOptions =  {
+                            center: that.currentLib.latLng,
+                            zoom: 8,
+                            streetViewControl: false,
+                            mapTypeId: google.maps.MapTypeId.ROADMAP
+                        },
+                        map = new google.maps.Map(newDiv, mapOptions);
+                    that.gmap = map;
+                    that.gmapMarker = new google.maps.Marker({
+                        position : that.currentLib.latLng,
+                        animation : google.maps.Animation.DROP,
+                        map : that.gmap
+                    });
+                    that.modalBody.appendChild(newDiv);
+                    that.viewCache['map'] = newDiv;
+                } else {
+                    that.viewCache['map'] = document.createElement('span'); // if IE8, just create an invisible bogus element to satisfy the map logic elswhere! (quick'n'dirty fix)
+                }
                 if (cb) {
                     cb();
                 }
