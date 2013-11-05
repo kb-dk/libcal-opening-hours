@@ -78,6 +78,9 @@
 #openingHoursModalDiv table tr td.rightalign, #openingHoursTargetDiv table tr td.rightalign{
     text-align: right;
 }
+#openingHoursModalDiv img{
+    border:0;
+}
 #openingHoursTargetDiv .floatleft{
     float: left;
 }
