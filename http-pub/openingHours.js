@@ -747,6 +747,32 @@ var OpeningHours = (function (document) {
     OpeningHours.loadOpeningHours = function (data) {
         window.openingHours = new OpeningHours(data, targetElement, modalDialog);
         window.openingHours.openingHours.hasNoLatLngCoordsYet = true; // flag to first time renderView renders a map
+        // setting up default config, if something is missing
+        OpeningHours.config = OpeningHours.config || {};
+        OpeningHours.config.library = OpeningHours.config.library || 'all';
+        OpeningHours.config.timespan = OpeningHours.config.timespan || 'day';
+        OpeningHours.config.allLibraryColor = OpeningHours.config.allLibraryColor || '#000';
+        OpeningHours.config.useLibraryColors = OpeningHours.config.useLibraryColors !== undefined ? OpeningHours.config.useLibraryColors : false;
+        var stdI18n = {
+            library: 'Bibliotek',
+            openHourToday: 'Dagens Åbningstid',
+            openHour: 'Åbningstid',
+            closed: 'Lukket',
+            weekdays: ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'],
+            weekdaysAbbr: ['man','tirs','ons','tors','fre','lør','søn'],
+            info: 'Info',
+            map: 'Kort',
+            allWeek: 'Hele ugen',
+            allLibraries: 'Alle biblioteker',
+            ampm: false
+        };
+        OpeningHours.config.i18n = OpeningHours.config && OpeningHours.config.i18n || stdI18n;
+        for (var key in stdI18n) {
+            if (stdI18n.hasOwnProperty(key)) {
+                OpeningHours.config.i18n[key] = OpeningHours.config.i18n[key] || stdI18n[key];
+            }
+        }
+
         window.openingHours.init(OpeningHours.config);
     };
 
