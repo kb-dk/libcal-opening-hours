@@ -1,5 +1,5 @@
 #openingHoursModalDiv{
-    position: fixed;
+    position: absolute;
     left: 50%;
     width: 560px; /* FIXME: Hardcoded value - should be calculated! */
     margin-left: -280px;
