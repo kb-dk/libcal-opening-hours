@@ -135,11 +135,7 @@ var OpeningHours = (function (document) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
             }
             var that = this;
-            this.config = config || {
-                library: 'all',
-                timespan: 'day',
-                colorScheme: 'standard'
-            };
+            this.config = config || OpeningHours.config;
             for (var i=0; i < that.openingHours.locations.length; i += 1) {
                 libraryIndex[that.openingHours.locations[i].name] = i;
             }
