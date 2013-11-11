@@ -13,6 +13,7 @@
     -webkit-transition: opacity .3s linear, top .3s ease-out !important;
     -moz-transition: opacity .3s linear, top .3s ease-out !important;
     -ms-transition: opacity .3s linear, top .3s ease-out !important;
+    overflow: auto; /* last resort for the all:week table on low-width mobile devices! :( */
 }
 .openingHoursOverlay{
     position: fixed;
