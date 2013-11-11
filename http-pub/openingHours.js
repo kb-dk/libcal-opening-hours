@@ -169,6 +169,15 @@ var OpeningHours = (function (document) {
                 library : this.config.library,
                 timespan : this.config.timespan
             });
+            // set modalWidth
+            that.resizeModalWidth();
+            // set window.resize event
+            if (window.addEventListener) {
+                window.addEventListener('resize', that.resizeWindow);
+            } else {
+                // IE8 - set up a modalDialog resize on window.resize
+                window.attachEvent('resize', that.resizeWindow);
+            }
         },
 
         /**
@@ -418,7 +427,7 @@ var OpeningHours = (function (document) {
                 newDiv = document.createElement('div');
                 if (!document.querySelector || document.getElementsByClassName) { // XXX !IE8
                     // render map
-                    newDiv.style.height = '300px'; // FIXME: this should be calculated depending on the client, not just hardcoded to something!
+                    newDiv.style.height = '300px';
                     var mapOptions =  {
                             center: that.currentLib.latLng,
                             zoom: 8,
@@ -614,7 +623,7 @@ var OpeningHours = (function (document) {
                     var mapLink = document.createElement('a'),
                         mapImage = document.createElement('img');
                     mapLink.href='https://maps.google.com/maps?q=' + that.currentLib.lat + ',' + that.currentLib.long + '&t=m&z=14';
-                    mapImage.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + that.currentLib.lat + ',' + that.currentLib.long + '&zoom=14&size=560x300&maptype=roadmap&markers=color:red%7C' + that.currentLib.lat + ',' + that.currentLib.long + '&sensor=false'; // FIXME: Hardcoded map size values (IE8 only)!
+                    mapImage.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + that.currentLib.lat + ',' + that.currentLib.long + '&zoom=14&size=' + (that.modalWidth || '560') + 'x300&maptype=roadmap&markers=color:red%7C' + that.currentLib.lat + ',' + that.currentLib.long + '&sensor=false'; // FIXME: Hardcoded map size values (IE8 only)!
                     mapLink.target = '_blank';
                     mapLink.appendChild(mapImage);
                     newDiv.appendChild(mapLink);
@@ -712,6 +721,18 @@ var OpeningHours = (function (document) {
                 str += '<div class="floatleft clearnone"><a href="' + leftLink.href + '">' + leftLink.text + '</a></div>';
             }
             return str + '</td></tr></tfoot>';
+        },
+
+        resizeModalWidth : function () {
+            var modalWidth = Math.round(document.body.clientWidth * 0.8);
+            this.modalWidth = modalWidth > 560 ? 560 : modalWidth; // NOTE: Maxwidth = 560 else 80% of window.body width
+        },
+
+        resizeWindow : function () {
+            var that = window.openingHours;
+            that.resizeModalWidth();
+            that.modalDialog.style.width = that.modalWidth + 'px';
+            that.modalDialog.style.marginLeft = '-' + Math.round(that.modalWidth / 2) + 'px';
         }
 
     };
