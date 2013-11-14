@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/*global require, console*/
+/*global require, console, process, __dirname*/
 
 var fs = require('fs'),
     path = require('path'),
@@ -14,139 +14,94 @@ if (homedir) {
     homedir = homedir.lastIndexOf('/') === homedir.length-1 ? homedir.substr(0, homedir.length - 1) : homedir;  // remove last '/' if present
 }
 
-function compressJSFile(fileUri, cb) {
-    console.log('compressing file: ' + fileUri);
+function processFile(config, cb) {
+    console.log('Processing file: ' + config.source);
+    var source = path.resolve(basedir, 'http-pub') + path.resolve('/', config.source),
+        destination = path.resolve(basedir, 'production') + path.resolve('/', config.destination);
 
-    fs.readFile(path.resolve(basedir, 'http-pub') + path.resolve('/', fileUri), {
+    fs.readFile(source, {
             encoding: 'utf-8'
-        }, function (err, data) {
+        },
+        function (err, data) {
             if (err) {
-                console.log('ERROR: Could not open file. ' + err.message);
+                console.log('ERROR: Could not open file ' + source + '. ' + err.message);
                 process.exit(1);
             }
 
-            if (homedir) {
+            if (config.replaceHomedir && homedir) {
                 data = data.replace(/http:\/\/localhost:8002/, homedir); // This might be slow, but it works, and it is only once per link under deployment it is happening!
             }
 
-            var ast = uglifyJS.parse(data),
-                compressor = uglifyJS.Compressor(),
-                minifiedFilename = path.basename(fileUri, '.js') + '_min.js';
-            minifiedFilename = path.resolve(basedir, 'production') + path.resolve('/', minifiedFilename);
-
-            ast.figure_out_scope();
-            ast = ast.transform(compressor);
-            ast.figure_out_scope();
-            ast.compute_char_frequency();
-            ast.mangle_names();
-
-            fs.writeFile(
-                minifiedFilename,
-                ast.print_to_string(),
-                {
-                    encoding: 'utf-8'
-                },
-                function (err) {
-                    if (err) {
-                        console.log(err);
-                        process.exit(1);
-                    } else {
-                        if (cb) {
-                            cb();
-                        }
-                    }
-                }
-            );
-    });
-}
-
-function compressCSSFile(fileUri, cb) {
-    console.log('compressing file: ' + fileUri);
-
-    fs.readFile(path.resolve(basedir, 'http-pub') + path.resolve('/', fileUri), {
-            encoding: 'utf-8'
-        }, function (err, data) {
-            if (err) {
-                console.log('ERROR: Could not open file. ' + err.message);
-                process.exit(1);
+            if (config.fnProcessData) {
+                data = config.fnProcessData(data);
             }
 
-            if (homedir) {
-                data = data.replace(/http:\/\/localhost:8002/, homedir); // This might be slow, but it works, and it is only once per link under deployment it is happening!
-            }
-
-            var minifiedFilename = path.basename(fileUri, '.css') + '_min.css';
-            minifiedFilename = path.resolve(basedir, 'production') + path.resolve('/', minifiedFilename);
-
-            fs.writeFile(
-                minifiedFilename,
-                uglifyCSS.processString(data),
-                {
-                    encoding: 'utf-8'
-                },
-                function (err) {
-                    if (err) {
-                        console.log(err);
-                        process.exit(1);
-                    } else {
-                        if (cb) {
-                            cb();
-                        }
+            fs.writeFile(destination, data, { encoding: 'utf-8' }, function (err) {
+                if (err) {
+                    console.log(err);
+                    process.exit(1);
+                } else {
+                    if (cb) {
+                        cb();
                     }
                 }
-            );
+            });
         }
     );
 }
 
-function copyFile(fileUri, cb) {
-    fs.readFile(path.resolve(basedir, 'http-pub') + path.resolve('/', fileUri), {
-            encoding: 'utf-8',
-        }, function (err, data) {
-            if (err) {
-                console.log('ERROR: Could not open file. ' + err.message);
-                process.exit(1);
-            }
-
-            if (homedir) {
-                data = data.replace(/http:\/\/localhost:8002/, homedir); // This might be slow, but it works, and it is only once per link under deployment it is happening!
-            }
-
-            fs.writeFile(
-                path.resolve(basedir, 'production') + path.resolve('/', fileUri),
-                data,
-                {
-                    encoding: 'utf-8'
-                },
-                function (err) {
-                    if (err) {
-                        console.log(err);
-                        process.exit(1);
-                    } else {
-                        if (cb) {
-                            cb();
-                        }
-                    }
-                }
-            );
-        }
-    );
+function getMinifiedFileName(filename) {
+    return path.basename(filename, path.extname(filename)) + '_min' + path.extname(filename);
 }
 
-// Compress and move files for production
-compressJSFile('openingHours.js', function () {
-    console.log('openingHours.js all done!');
-});
-
-compressCSSFile('openingHoursStyles.css', function () {
-    console.log('openingHoursStyles.css all done!');
-});
-
-copyFile('index.html', function () {
-    console.log('index.html all done!');
-});
-
-copyFile('openingHours.js');
-copyFile('openingHoursStyles.css');
-
+// --- Compress and move files for production ---
 console.log('working...');
+
+// minify and move openingHours
+processFile({
+    source : 'openingHours.js',
+    destination : 'openingHours.js',
+});
+
+processFile({
+    source : 'openingHours.js',
+    destination : getMinifiedFileName('openingHours.js'),
+    fnProcessData : function (data) {
+        var ast = uglifyJS.parse(data),
+            compressor = uglifyJS.Compressor();
+
+        ast.figure_out_scope();
+        ast = ast.transform(compressor);
+        ast.figure_out_scope();
+        ast.compute_char_frequency();
+        ast.mangle_names();
+
+        return ast.print_to_string();
+    },
+    replaceHomedir : true
+}, function () {
+    console.log('openingHours.js done.');
+});
+
+// minify and move openingHoursStyles.css
+processFile({
+    source : 'openingHoursStyles.css',
+    destination : 'openingHoursStyles.css',
+});
+
+processFile({
+    source : 'openingHoursStyles.css',
+    destination : getMinifiedFileName('openingHoursStyles.css'),
+    fnProcessData : uglifyCSS.processString
+}, function () {
+    console.log('openingHoursStyles.css done.');
+});
+
+// move index.html
+processFile({
+    source : 'index.html',
+    destination : 'index.html',
+    replaceHomedir : true
+}, function () {
+    console.log('index.html done.');
+});
