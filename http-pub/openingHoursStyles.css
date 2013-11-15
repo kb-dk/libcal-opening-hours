@@ -3,7 +3,6 @@
     text-align: left;
     left: 50%;
     width: 560px; /* FIXME: Hardcoded value - should be calculated! */
-    margin-left: -280px;
     z-index: 9050;
     border-radius: 6px;
     background-color: #fff;

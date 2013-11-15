@@ -281,6 +281,8 @@ var OpeningHours = (function (document) {
                     }
                     document.body.appendChild(this.overlay);
                 } 
+                modalDiv.style.marginTop = that.getScrollTop() + 'px'; // if scrolled y down, show the dialog y down
+                modalDiv.style.marginLeft = ((-1 * Math.round(that.modalWidth / 2) - 16) + that.getScrollLeft()) + 'px'; // if scrolled x left, show 50% -½ width + x
                 modalDiv.style.display = 'block';
                 window.setTimeout(function () { // NOTE: If they are executed in a row, the transitions does not happen (Chrome 28) since they are invoked while still hidden
                     if (window.transitionEnd) {
@@ -735,12 +737,37 @@ var OpeningHours = (function (document) {
             return str + '</td></tr></tfoot>';
         },
 
+        // snatched from http://stackoverflow.com/questions/871399/cross-browser-method-for-detecting-the-scrolltop-of-the-browser-window
+        getScrollTop : function () {
+        if (typeof pageYOffset !== 'undefined') {
+            //most browsers except IE before #9
+            return parseInt(pageYOffset);
+        } else {
+                var B = document.body, //IE 'quirks'
+                    D = document.documentElement; //IE with doctype
+                D = D.clientHeight ? D : B;
+                return parseInt(D.scrollTop, 10);
+            }
+        },
+    
+        getScrollLeft : function () {
+        if (typeof pageXOffset !== 'undefined') {
+            //most browsers except IE before #9
+            return parseInt(pageXOffset, 10);
+        } else {
+                var B = document.body, //IE 'quirks'
+                    D = document.documentElement; //IE with doctype
+                D = D.clientWidth ? D : B;
+                return parseInt(D.scrollLeft);
+            }
+        },
+    
         resizeModalWidth : function () {
             var that = this,
                 modalWidth = Math.round(document.body.clientWidth * 0.8);
             that.modalWidth = modalWidth > 560 ? 560 : modalWidth; // NOTE: Maxwidth = 560 else 80% of window.body width
             that.modalDialog.style.width = that.modalWidth + 'px';
-            that.modalDialog.style.marginLeft = '-' + (Math.round(that.modalWidth / 2) + 16) + 'px';
+            that.modalDialog.style.marginLeft = ((-1 * Math.round(that.modalWidth / 2) - 16) + that.getScrollLeft()) + 'px'; // TODO: OPTIMIZATION: This is set every time modalShow is called, so if it is set properly on init, it does not need to be set here too (but IE9 fails first time modalDialog is shown, if it isn't set initially?)
         },
 
         resizeWindow : function () {
