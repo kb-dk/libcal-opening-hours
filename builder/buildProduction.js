@@ -108,6 +108,9 @@ processFile({
 processFile({
     source : 'index.html',
     destination : 'index.html',
+    fnProcessData : function (data) {
+        return data.replace(/openingHours\.js/,'openingHours_min.js');
+    },
     replaceHomedir : true
 }, function () {
     console.log('index.html done.');
