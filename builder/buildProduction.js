@@ -61,6 +61,10 @@ console.log('working...');
 processFile({
     source : 'openingHours.js',
     destination : 'openingHours.js',
+    //fnProcessData : function (data) {
+    //    return data.replace(/openingHoursStyles\.css/,'openingHoursStyles_min.css');
+    //},
+    replaceHomedir : true 
 });
 
 processFile({
