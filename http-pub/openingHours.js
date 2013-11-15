@@ -425,7 +425,7 @@ var OpeningHours = (function (document) {
                     delete that.openingHours.hasNoLatLngCoordsYet;
                 }
                 newDiv = document.createElement('div');
-                if (!document.querySelector || document.getElementsByClassName) { // XXX !IE8
+                if (!document.querySelector || document.getElementsByClassName) { // !IE8
                     // render map
                     newDiv.style.height = '300px';
                     var mapOptions =  {
@@ -619,7 +619,7 @@ var OpeningHours = (function (document) {
                     tmpElem.className = 'clearRght';
                     newDiv.appendChild(tmpElem);
                 }
-                if (document.querySelector && !document.getElementsByClassName) { // XXX IE8
+                if (document.querySelector && !document.getElementsByClassName) { // IE8
                     var mapLink = document.createElement('a'),
                         mapImage = document.createElement('img');
                     mapLink.href='https://maps.google.com/maps?q=' + that.currentLib.lat + ',' + that.currentLib.long + '&t=m&z=14';
