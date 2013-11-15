@@ -250,9 +250,9 @@ var OpeningHours = (function (document) {
         showModal : function () {
             var that = this,
                 modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
-            if (modalDiv && modalDiv.modal) {
-                modalDiv.modal('show');
-            } else {
+//            if (modalDiv && modalDiv.modal) { // After finetuning my own show/hide dialog, I found out it was broken using bootstrap/jQuery, so for now it is just //'ed
+//                modalDiv.modal('show');
+//            } else {
                 modalDiv = modalDiv.nodeType === 1 ? modalDiv : modalDiv[0];
                 if (!that.overlay) { // NOTE: This is the first time the modal is set up by hand
                     that.overlay = document.createElement('div');
@@ -298,16 +298,16 @@ var OpeningHours = (function (document) {
                     }
                 }, 50);
                 that.overlay.style.display = 'block';
-            }
+//            }
             that.modalDialogIsVisible = true;
         },
 
         hideModal : function () {
             var that = this,
                 modalDiv = (typeof $ === 'function') && $('#openingHoursModalDiv') || document.getElementById('openingHoursModalDiv');
-            if (modalDiv && modalDiv.modal) {
-                modalDiv.modal('hide');
-            } else {
+ //           if (modalDiv && modalDiv.modal) { // After finetuning my own show/hide dialog, I found out it was broken using bootstrap/jQuery, so for now it is just //'ed
+ //               modalDiv.modal('hide');
+ //           } else {
                 modalDiv = modalDiv.nodeType === 1 ? modalDiv : modalDiv[0];
                 modalDiv.style.opacity = 0;
                 modalDiv.style.top = '-25%';
@@ -317,7 +317,7 @@ var OpeningHours = (function (document) {
                         modalDiv.style.display = 'none';
                     });
                 }
-            }
+ //           }
             that.modalDialogIsVisible = false;
         },
 
