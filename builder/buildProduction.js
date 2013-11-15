@@ -71,6 +71,9 @@ processFile({
     source : 'openingHours.js',
     destination : getMinifiedFileName('openingHours.js'),
     fnProcessData : function (data) {
+        //use minified css
+        data = data.replace(/openingHoursStyles\.css/,'openingHoursStyles_min.css');
+
         var ast = uglifyJS.parse(data),
             compressor = uglifyJS.Compressor();
 
