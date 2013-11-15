@@ -20,15 +20,15 @@
     <div id="container">
         <p>Here is room for some 3rd party js:</p>
         <div id="openingHoursContainer">
-            <script src="http://localhost:8002/openingHours.js" id="openingHoursScript"></script>
+            <script src="http://localhost:8002/openingHours.js"></script>
             <script type="text/javascript">
                 OpeningHours.config = {
                     // Please notice that the view library: 'all', timespan: 'week' is to wide to put in one column!
                     library: 'Den Sorte Diamant', // 'all' or the library name as it is defined in LibCal (eg. 'HUM', 'KUB Nord' etc.)
                     timespan: 'day', // 'week' or 'day'
-                    colorScheme: 'standard03', // 'standard01', 'standard02', 'standard03'
+                    colorScheme: 'standard03', // 'standard01', 'standard02', 'standard03' - used for headers if no other color is set
                     allLibraryColor: '#336600', // overrides the standardColor if defined
-                    useLibraryColors: true,
+                    useLibraryColors: true, // use library specific colors (defined in libGuides) - overrides colorScheme if defined
                     i18n: {
                         library: 'Bibliotek',
                         openHourToday: 'Dagens Åbningstid',
