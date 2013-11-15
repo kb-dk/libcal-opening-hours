@@ -755,7 +755,7 @@ var OpeningHours = (function (document) {
     modalDialog.style.opacity = 0;
     modalDialog.style.top = '-25%';
     // inject them just before the scripts
-    openingHoursContainer.insertBefore(modalDialog, openingHoursContainer.firstChild);
+    document.body.appendChild(modalDialog); // appending modal dialog to body to avoid getting trapped inside some position:relative/absolute container.
     openingHoursContainer.insertBefore(targetElement, openingHoursContainer.firstChild);
 
     // this is needed for google.maps to be loaded correctly asynchronously
