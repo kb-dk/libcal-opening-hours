@@ -623,7 +623,7 @@ var OpeningHours = (function (document) {
                     var mapLink = document.createElement('a'),
                         mapImage = document.createElement('img');
                     mapLink.href='https://maps.google.com/maps?q=' + that.currentLib.lat + ',' + that.currentLib.long + '&t=m&z=14';
-                    mapImage.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + that.currentLib.lat + ',' + that.currentLib.long + '&zoom=14&size=' + (that.modalWidth || '560') + 'x300&maptype=roadmap&markers=color:red%7C' + that.currentLib.lat + ',' + that.currentLib.long + '&sensor=false'; // FIXME: Hardcoded map size values (IE8 only)!
+                    mapImage.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + that.currentLib.lat + ',' + that.currentLib.long + '&zoom=14&size=' + (that.modalWidth - 32 || '560') + 'x300&maptype=roadmap&markers=color:red%7C' + that.currentLib.lat + ',' + that.currentLib.long + '&sensor=false'; // FIXME: Hardcoded map size values (IE8 only)! -32 = 2x16 padding (box-sizing=border-box)
                     mapLink.target = '_blank';
                     mapLink.appendChild(mapImage);
                     newDiv.appendChild(mapLink);
@@ -724,15 +724,16 @@ var OpeningHours = (function (document) {
         },
 
         resizeModalWidth : function () {
-            var modalWidth = Math.round(document.body.clientWidth * 0.8);
-            this.modalWidth = modalWidth > 560 ? 560 : modalWidth; // NOTE: Maxwidth = 560 else 80% of window.body width
+            var that = this,
+                modalWidth = Math.round(document.body.clientWidth * 0.8);
+            that.modalWidth = modalWidth > 560 ? 560 : modalWidth; // NOTE: Maxwidth = 560 else 80% of window.body width
+            that.modalDialog.style.width = that.modalWidth + 'px';
+            that.modalDialog.style.marginLeft = '-' + (Math.round(that.modalWidth / 2) + 16) + 'px';
         },
 
         resizeWindow : function () {
             var that = window.openingHours;
             that.resizeModalWidth();
-            that.modalDialog.style.width = that.modalWidth + 'px';
-            that.modalDialog.style.marginLeft = '-' + Math.round(that.modalWidth / 2) + 'px';
         }
 
     };
