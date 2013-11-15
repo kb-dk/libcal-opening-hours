@@ -267,6 +267,18 @@ var OpeningHours = (function (document) {
                             that.hideModal.call(that);
                         });
                     }
+                    // click on overlay => close modal dialog
+                    if (that.overlay.addEventListener) {
+                        that.overlay.addEventListener('click', function () {
+                            that.hideModal.call(that);
+                        });
+                    } else {
+                        if (that.overlay.attachEvent) {
+                            that.overlay.attachEvent('click', function () {
+                                that.hideModal.call(that);
+                            });
+                        }
+                    }
                     document.body.appendChild(this.overlay);
                 } 
                 modalDiv.style.display = 'block';
