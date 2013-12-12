@@ -17,7 +17,7 @@ ifeq (,$($(GITROOT)/$(BUILDER)/$(NODE_MODULES)))
 	cd $(GITROOT)/$(BUILDER); npm install
 endif
 
-	node builder/buildProduction.js --homedir=static.kb.dk
+	node builder/buildProduction.js --homedir=static.kb.dk/libcal
 	@echo make: production completed
 
 #development - install modules for the server
