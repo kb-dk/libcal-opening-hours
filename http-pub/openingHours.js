@@ -681,6 +681,9 @@ var OpeningHours = (function (document) {
         },
 
         timesToStr : function (times) {
+            if (times.status === 'ByApp') {
+                return this.config.i18n.byAppointment;
+            }
             if (times.status !== 'open') {
                 return this.config.i18n.closed;
             }
@@ -815,6 +818,7 @@ var OpeningHours = (function (document) {
             openHourToday: 'Dagens Åbningstid',
             openHour: 'Åbningstid',
             closed: 'Lukket',
+            byAppointment: 'Efter aftale',
             weekdays: ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'],
             weekdaysAbbr: ['man','tirs','ons','tors','fre','lør','søn'],
             info: 'Info',
