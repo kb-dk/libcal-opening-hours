@@ -36,7 +36,7 @@ var OpeningHours = (function (document) {
     //import stylesheet // TODO: Make sure loading this sheet does not block for anything else
     var newCssLinkElement = document.createElement('link');
     newCssLinkElement.rel = 'stylesheet';
-    newCssLinkElement.href = 'https://localhost:8002/openingHoursStyles.css';
+    newCssLinkElement.href = 'http://localhost:8002/openingHoursStyles.css';
     document.getElementsByTagName('head')[0].appendChild(newCssLinkElement);
 
 // ===== [ private helper functions ] =====

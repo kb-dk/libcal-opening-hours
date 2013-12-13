@@ -12,6 +12,10 @@ var fs = require('fs'),
 if (homedir) {
     homedir = homedir.indexOf('http') === 0 ? argv.homedir : 'http://' + argv.homedir; // prefix 'http://' if lacking
     homedir = homedir.lastIndexOf('/') === homedir.length-1 ? homedir.substr(0, homedir.length - 1) : homedir;  // remove last '/' if present
+
+    if (argv.https && argv.https === 'true') {
+        homedir = homedir.replace(/http\:/, 'https:');
+    }
 }
 
 function processFile(config, cb) {
