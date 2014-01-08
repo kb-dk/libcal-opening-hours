@@ -429,17 +429,17 @@ var OpeningHours = (function (document) {
                 innerHTML,
                 newDiv;
             if (timespan === 'map') {
-                if (that.openingHours.hasNoLatLngCoordsYet) { // first time a map is rendered, all library coordinates are translated to google.maps.LatLng
-                    // generating google.maps.LatLng positions for all libraries with lat:long attributes
-                    that.openingHours.locations.forEach(function (location) {
-                        if (location.lat.length && location.long.length) {
-                            location.latLng = new google.maps.LatLng(location.lat, location.long);
-                        }
-                    });
-                    delete that.openingHours.hasNoLatLngCoordsYet;
-                }
                 newDiv = document.createElement('div');
                 if (!document.querySelector || document.getElementsByClassName) { // !IE8
+                    if (that.openingHours.hasNoLatLngCoordsYet) { // first time a map is rendered, all library coordinates are translated to google.maps.LatLng
+                        // generating google.maps.LatLng positions for all libraries with lat:long attributes
+                        that.openingHours.locations.forEach(function (location) {
+                            if (location.lat.length && location.long.length) {
+                                location.latLng = new google.maps.LatLng(location.lat, location.long);
+                            }
+                        });
+                        delete that.openingHours.hasNoLatLngCoordsYet;
+                    }
                     // render map
                     newDiv.style.height = '300px';
                     var mapOptions =  {
