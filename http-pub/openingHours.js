@@ -151,7 +151,7 @@ var OpeningHours = (function (document) {
                     that.modalDialog.addEventListener(eventName, function (e) {
                         if (e.target === that.modalDialog && e.propertyName === 'top'){ // only do trigger if it is the top transition of the modalDialog that has ended
                             if (that.modalDialogIsVisible) {
-                                if (that.currentTimespan === 'map') {
+                                if (that.currentTimespan === 'map' && that.gmap) {
                                     google.maps.event.trigger(that.gmap, 'resize');
                                     that.gmap.setCenter(that.currentLib.latLng);
                                 }
@@ -189,7 +189,7 @@ var OpeningHours = (function (document) {
             }
             var that = this;
             Array.prototype.forEach.call(that.targetElement.childNodes, function (view) {
-                if (!view.style) {
+                if ((!view.style) && (typeof console !== 'undefined')) { // FIXME: is this even possible? I think we could safely remove this clause?
                     console.log('openingHours: View has no style? ', view);
                 }
                 view.style.display = 'none';
@@ -290,7 +290,7 @@ var OpeningHours = (function (document) {
                         modalDiv.style.top = '10%';
                     } else {
                         that.animateModal(true, function () {
-                            if (that.currentLib) { // NOTE: Only resize map if it IS a map - if there is no currentLib, it is the all libs all week modal!
+                            if (that.currentLib && that.gmap) { // NOTE: Only resize map if it IS a map (and there is a map IE8) - if there is no currentLib, it is the all libs all week modal!
                                 google.maps.event.trigger(that.gmap, 'resize');
                                 that.gmap.setCenter(that.currentLib.latLng);
                             }
