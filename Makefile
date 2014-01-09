@@ -1,4 +1,4 @@
-GITROOT = `git rev-parse --show-toplevel`
+GITROOT = `pwd`
 BUILDER = builder
 NODE_MODULES = node_modules
 
