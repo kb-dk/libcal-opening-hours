@@ -671,11 +671,15 @@ var OpeningHours = (function (document) {
         },
 
         ampmTo24 : function (str) { // FIXME: I don't think this need to be a member variable?
+            var hours = parseInt(str, 10).toString(),
+                minuttes;
             if (str.indexOf('am') >= 0) {
-                return parseInt(str, 10).toString();
+                minuttes = parseInt(str.substr(str.indexOf(hours) + hours.length + 1), 10);
+                return hours + (isNaN(minuttes) ? '' : ':' + minuttes);
             }
             if (str.indexOf('pm') >= 0) {
-                return (parseInt(str, 10) + 12).toString();
+                minuttes = parseInt(str.substr(str.indexOf(hours) + hours.length + 1), 10);
+                return (parseInt(hours) + 12) + (isNaN(minuttes) ? '' : ':' + minuttes);
             }
             return str;
         },
