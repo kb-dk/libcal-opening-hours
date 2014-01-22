@@ -2,7 +2,7 @@
     position: absolute;
     text-align: left;
     left: 50%;
-    width: 560px; /* FIXME: Hardcoded value - should be calculated! */
+    width: 730px; /* FIXME: Hardcoded value - should be calculated! */
     z-index: 9050;
     border-radius: 6px;
     background-color: #fff;
