@@ -176,7 +176,7 @@ var OpeningHours = (function (document) {
                 window.addEventListener('resize', that.resizeWindow);
             } else {
                 // IE8 - set up a modalDialog resize on window.resize
-                window.attachEvent('resize', that.resizeWindow);
+                window.attachEvent('onresize', that.resizeWindow);
             }
         },
 
@@ -274,7 +274,7 @@ var OpeningHours = (function (document) {
                         });
                     } else {
                         if (that.overlay.attachEvent) {
-                            that.overlay.attachEvent('click', function () {
+                            that.overlay.attachEvent('onclick', function () {
                                 that.hideModal.call(that);
                             });
                         }
