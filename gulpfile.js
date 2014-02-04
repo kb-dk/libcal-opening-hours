@@ -13,6 +13,7 @@ var LOCALHOSTURL = 'http://localhost:8002/';
 var STATICURL = 'https://static.kb.dk/libcal/';
 
 gulp.task('default', function () {
+    console.log('Building a production build...');
     // move html files
     gulp.src(HTMLSRC)
     .pipe(replace(LOCALHOSTURL, STATICURL))
