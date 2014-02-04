@@ -15,9 +15,9 @@
   "devDependencies": {
     "gulp-util": "~2.2.14",
     "gulp": "~3.5.1",
-    "gulp-changed": "~0.1.0",
     "gulp-uglify": "~0.2.0",
     "gulp-cssmin": "~0.1.0",
-    "gulp-replace": "~0.2.0"
+    "gulp-replace": "~0.2.0",
+    "gulp-rename": "~0.2.2"
   }
 }
