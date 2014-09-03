@@ -61,6 +61,20 @@ function getMinifiedFileName(filename) {
 // --- Compress and move files for production ---
 console.log('working...');
 
+// move openingHours.js nonminified
+processFile({
+    source : 'openingHours.js',
+    destination : 'openingHours.js',
+    fnProcessData : function (data) {
+        //use minified css
+        data = data.replace(/openingHoursStyles\.css/,'openingHoursStyles_min.css');
+        return data;
+    },
+    replaceHomedir : true
+}, function () {
+    console.log('openingHours.js done.');
+});
+
 // minify openingHours
 processFile({
     source : 'openingHours.js',
