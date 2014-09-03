@@ -70,6 +70,7 @@
     border-top-right-radius: 5px;
 }
 #openingHoursModalDiv table td, #openingHoursTargetDiv table td{
+    word-wrap: break-word;
     padding: 2px 5px;
 }
 #openingHoursModalDiv table tr td.timeField, #openingHoursTargetDiv table tr td.timeField{
