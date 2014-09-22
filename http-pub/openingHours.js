@@ -845,5 +845,5 @@ var OpeningHours = (function (document) {
 
 // load google.maps if they are not present
 if (!window.google || !window.google.maps) {
-    loadAdditionalJavascript('//maps.googleapis.com/maps/api/js?sensor=false&callback=OpeningHours.initializeGMaps');
+    loadAdditionalJavascript('//maps.googleapis.com/maps/api/js?sensor=false&v=3.exp&callback=OpeningHours.initializeGMaps&key=AIzaSyDFxu8aPIl2RM5UBHupA-ryqdbsudkwU9I');
 }
