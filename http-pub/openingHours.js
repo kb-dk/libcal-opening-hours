@@ -792,7 +792,7 @@ var OpeningHours = (function (document) {
         }),
         modalDialog = createNewDiv({
             'id' : 'openingHoursModalDiv',
-            'class' : 'modal hide fade',
+            'class' : 'modal',
             'tabindex' : '-1',
             'role' : 'dialog',
             'aria-labelledby' : 'openingHoursModalLabel',
