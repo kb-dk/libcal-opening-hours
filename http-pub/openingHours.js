@@ -688,6 +688,9 @@ var OpeningHours = (function (document) {
             if (times.status === 'ByApp') {
                 return this.config.i18n.byAppointment;
             }
+            if (times.status === '24hours') {
+                return this.config.i18n.allDay || '24 hours'; // FIXME: Make a translate function that returns either the string or the last part of the variable name (so it defaults to en)
+            }
             if (times.status !== 'open') {
                 return this.config.i18n.closed;
             }
