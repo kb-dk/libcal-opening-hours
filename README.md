@@ -28,7 +28,7 @@ Copy the files from development/ to your desired webroot (_&lt;YOURDESTINATION&g
 Build production files
 ----------------------
 
-    gulp development [-dest=<YOURDESTINATION>]
+    gulp [-dest=<YOURDESTINATION>]
 
 *&lt;YOURDESTINATION&gt;* : the URI to where you are going to dump the production files.
 
