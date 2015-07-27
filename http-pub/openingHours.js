@@ -33,6 +33,9 @@ function loadAdditionalJavascript(url, callback) { // TODO: We might wanna shove
 
 var OpeningHours = (function (document) {
     'use strict';
+
+    var version = '1.1.0';
+
     //import stylesheet // TODO: Make sure loading this sheet does not block for anything else
     var newCssLinkElement = document.createElement('link');
     newCssLinkElement.rel = 'stylesheet';
@@ -128,6 +131,7 @@ var OpeningHours = (function (document) {
     };
 
     OpeningHours.prototype = {
+        version : version,
         init : function (config) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
