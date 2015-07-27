@@ -128,8 +128,6 @@ var OpeningHours = (function (document) {
     };
 
     OpeningHours.prototype = {
-        constructor : OpeningHours,
-        
         init : function (config) {
             if (!this.openingHours) {
                 throw new NotInitializedError('Object hasn\'t been initialized yet.');
