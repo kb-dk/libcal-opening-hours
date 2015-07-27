@@ -334,6 +334,10 @@ var OpeningHours = (function (document) {
             }
             config = config || {};
             config.library = config.library || this.config.library || 'all';
+            if (config.library.indexOf(',') >= 0) {
+                this.config.libraryWhitelist = config.library.split(/\s*,\s*/); // The library is a list of libraries. We transform the list into a whitelist
+                config.library = config.timespan === 'week' ? this.config.libraryWhitelist[0] : 'all'; // if timespan=week show the first library in the whitelist else show list of whitelisted libraries
+            }
             config.timespan = config.timespan || this.config.timespan || 'day';
             var that = this,
                 viewId = ((config.timespan !== 'map') ? // we only want one google.map view in the cache (and just pans it around and sets/removes markers as we go along)!
@@ -512,16 +516,18 @@ var OpeningHours = (function (document) {
                         that.config.i18n.weekdaysAbbr[6]
                         ) + '<tbody>';
                     that.openingHours.locations.forEach(function (location) {
-                        contentStr += getTr(
-                            location.name,
-                            that.timesToStr(location.weeks[0].Monday.times),
-                            that.timesToStr(location.weeks[0].Tuesday.times),
-                            that.timesToStr(location.weeks[0].Wednesday.times),
-                            that.timesToStr(location.weeks[0].Thursday.times),
-                            that.timesToStr(location.weeks[0].Friday.times),
-                            that.timesToStr(location.weeks[0].Saturday.times),
-                            that.timesToStr(location.weeks[0].Sunday.times)
-                        );
+                        if ((!openingHours.config.libraryWhitelist) || (openingHours.config.libraryWhitelist.indexOf(location.name) >= 0)) {
+                            contentStr += getTr(
+                                location.name,
+                                that.timesToStr(location.weeks[0].Monday.times),
+                                that.timesToStr(location.weeks[0].Tuesday.times),
+                                that.timesToStr(location.weeks[0].Wednesday.times),
+                                that.timesToStr(location.weeks[0].Thursday.times),
+                                that.timesToStr(location.weeks[0].Friday.times),
+                                that.timesToStr(location.weeks[0].Saturday.times),
+                                that.timesToStr(location.weeks[0].Sunday.times)
+                            );
+                        }
                     });
                     contentStr += '</tbody></table>';
                 } else {
@@ -529,13 +535,15 @@ var OpeningHours = (function (document) {
                     contentStr += '<table>' + that.getThead(that.config.i18n.library, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName(); // TODO: We could check for dates too, to invalidate these?
                     that.openingHours.locations.forEach(function (location) {
-                        contentStr += getTr(
-                            {
-                                href: 'javascript: openingHours.setView({library: \'' + location.name + '\',timespan: \'week\' });',
-                                text: location.name
-                            },
-                            that.timesToStr(location.weeks[0][today].times)
-                        );
+                        if ((!openingHours.config.libraryWhitelist) || (openingHours.config.libraryWhitelist.indexOf(location.name) >= 0)) {
+                            contentStr += getTr(
+                                {
+                                    href: 'javascript: openingHours.setView({library: \'' + location.name + '\',timespan: \'week\' });',
+                                    text: location.name
+                                },
+                                that.timesToStr(location.weeks[0][today].times)
+                            );
+                        }
                     });
                     contentStr += '</tbody>';
                     contentStr += that.getTfoot(
@@ -815,6 +823,8 @@ var OpeningHours = (function (document) {
         OpeningHours.config = OpeningHours.config || {};
         OpeningHours.config.library = OpeningHours.config.library || 'all';
         OpeningHours.config.timespan = OpeningHours.config.timespan || 'day';
+        // NOTE: These names are hardcoded as they are in libcal right now. If KUBIS changes the names in libcal, they will disappear from the list (since the new name isn't here)
+        OpeningHours.config.libraryWhitelist = OpeningHours.config.libraryWhitelist || ['Den Sorte Diamant','FARMA','HUM','JUR','KUB Nord','KUB Frederiksberg','SAMF','TEOL','IVA'];
         OpeningHours.config.allLibraryColor = OpeningHours.config.allLibraryColor || '#000';
         OpeningHours.config.useLibraryColors = OpeningHours.config.useLibraryColors !== undefined ? OpeningHours.config.useLibraryColors : false;
         var stdI18n = {
