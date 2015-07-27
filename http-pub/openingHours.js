@@ -137,6 +137,27 @@ var OpeningHours = (function (document) {
             for (var i=0; i < that.openingHours.locations.length; i += 1) {
                 libraryIndex[that.openingHours.locations[i].name] = i;
             }
+            var librariesThatsNotInTheResult = '';
+            // testing whether all libraries is in the libcal response, and warning about missing libraries (possibly typos)
+            // TODO: Performance: Might be dropped, but I think it is nice to get an errormessage when there is a typo?
+            if (OpeningHours.config.library.indexOf(',') >= 0) {
+                OpeningHours.config.library.split(/\s*,\s*/).forEach(function (library) {
+                    if ('undefined' === typeof libraryIndex[library]) {
+                        librariesThatsNotInTheResult += ', "' + library + '"';
+                    }
+                });
+            } else {
+                OpeningHours.config.libraryWhitelist.forEach(function (library) {
+                    if ('undefined' === typeof libraryIndex[library]) {
+                        librariesThatsNotInTheResult += ', "' + library + '"';
+                    }
+                });
+            }
+            if (librariesThatsNotInTheResult.length) {
+                if ('undefined' !== window.console) {
+                    console.warn('No data recieved on: ' + librariesThatsNotInTheResult.substr(2) + '. This might be about misspelling?');
+                }
+            }
             //inject modal dialog DOM
             that.modalDialog.innerHTML = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="openingHoursModalLabel">OpeningHours</h3></div><div id="openingHoursModalInfobox"></div><div class="modal-body"></div>';
             that.modalHeader = document.getElementById('openingHoursModalLabel');
