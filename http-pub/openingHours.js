@@ -849,7 +849,9 @@ var OpeningHours = (function (document) {
         OpeningHours.config.library = OpeningHours.config.library || 'all';
         OpeningHours.config.timespan = OpeningHours.config.timespan || 'day';
         // NOTE: These names are hardcoded as they are in libcal right now. If KUBIS changes the names in libcal, they will disappear from the list (since the new name isn't here)
-        OpeningHours.config.libraryWhitelist = OpeningHours.config.libraryWhitelist || ['Den Sorte Diamant','FARMA','HUM','JUR','KUB Nord','KUB Frederiksberg','SAMF','TEOL','IVA'];
+        OpeningHours.config.libraryWhitelist = OpeningHours.config.libraryWhitelist || 
+          (data.locations && data.locations.map(function(location) {return location.name})) || 
+          ['Den Sorte Diamant', 'Diamantens læsesale', 'FARMA','HUM','JUR','KUB Nord','KUB Frederiksberg','SAMF','TEOL','IVA'];
         OpeningHours.config.allLibraryColor = OpeningHours.config.allLibraryColor || '#000';
         OpeningHours.config.useLibraryColors = OpeningHours.config.useLibraryColors !== undefined ? OpeningHours.config.useLibraryColors : false;
         var stdI18n = {
