@@ -380,7 +380,7 @@ var OpeningHours = (function (document) {
                     that.viewCache[viewId].style.display = 'block';
                     if (viewId === 'map'){
                         // set the headline
-                        that.modalHeader.innerHTML = that.currentLib.name;
+                        that.modalHeader.innerHTML = that.getLibraryName(that.currentLib.name);
                         // set infobox
                         that.modalInfobox.style.display = 'block';
                         Array.prototype.forEach.call(that.modalInfobox.children, function (infobox) { // TODO: There is no logic in show/hiding the views and remove/append the infobox
@@ -543,7 +543,7 @@ var OpeningHours = (function (document) {
                     that.openingHours.locations.forEach(function (location) {
                         if ((!openingHours.config.libraryWhitelist) || (openingHours.config.libraryWhitelist.indexOf(location.name) >= 0)) {
                             contentStr += getTr(
-                                location.name,
+                                that.getLibraryName(location.name),
                                 that.timesToStr(location.weeks[0].Monday.times),
                                 that.timesToStr(location.weeks[0].Tuesday.times),
                                 that.timesToStr(location.weeks[0].Wednesday.times),
@@ -564,7 +564,7 @@ var OpeningHours = (function (document) {
                             contentStr += getTr(
                                 {
                                     href: 'javascript: openingHours.setView({library: \'' + location.name + '\',timespan: \'week\' });',
-                                    text: location.name
+                                    text: that.getLibraryName(location.name)
                                 },
                                 that.timesToStr(location.weeks[0][today].times)
                             );
@@ -595,7 +595,7 @@ var OpeningHours = (function (document) {
                         href : 'javascript: openingHours.setView({library: \'all\',timespan: \'' + timespan + '\' });'
                     }, that.config.i18n.openHourToday) + '<tbody>';
                     today = getDayName();
-                    contentStr += getTr(library, that.timesToStr(libraryHours[today].times));
+                    contentStr += getTr(that.getLibraryName(library), that.timesToStr(libraryHours[today].times));
                     contentStr += '</tbody>';
                     contentStr += that.getTfoot(
                         {
@@ -609,7 +609,7 @@ var OpeningHours = (function (document) {
                     break;
                 case 'week' :
                     // --- [ lib week ] ---
-                    contentStr += '<table>' + that.getThead(library, that.config.i18n.openHour) + '<tbody>';
+                    contentStr += '<table>' + that.getThead(that.getLibraryName(library), that.config.i18n.openHour) + '<tbody>';
                     that.config.i18n.weekdays.forEach(function (weekday, index) {
                         contentStr += getTr(weekday, that.timesToStr(libraryHours[weekdays[(index + 1) % 7]].times));
                     });
@@ -814,7 +814,11 @@ var OpeningHours = (function (document) {
         resizeWindow : function () {
             var that = window.openingHours;
             that.resizeModalWidth();
-        }
+        },
+
+        getLibraryName : function (library) {
+            return window.openingHours.config.i18n[library] || library;
+        },
 
     };
 
